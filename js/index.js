@@ -3,9 +3,9 @@ var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
 //var WebServicePath ='http://1.255.255.184:8085/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath ='http://1.255.255.98:8082/NexstepWebService/mobileLinkResolver.service';
+//var WebServicePath ='http://1.255.255.98:8082/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -135,8 +135,8 @@ function commanLogin(){
  	var domainName = userNameValue.split('@')[1];
 	 var jsonToDomainNameSend = new Object();
 	jsonToDomainNameSend["userName"] = domainName;
-	//jsonToDomainNameSend["mobilePlatform"] = device.platform;
-	jsonToDomainNameSend["mobilePlatform"] = "Android";
+	jsonToDomainNameSend["mobilePlatform"] = device.platform;
+	//jsonToDomainNameSend["mobilePlatform"] = "Android";
 	jsonToDomainNameSend["appType"] = "NEXGEN_EXPENZING_TNE_APP";
   	//var res=JSON.stringify(jsonToDomainNameSend);
 	var requestPath = WebServicePath;
@@ -2322,7 +2322,7 @@ console.log("url :  "+tempurl);
 var settings = {
   "async": true,
   "crossDomain": true,
-  "url": "https://cors-anywhere.herokuapp.com/https://atlas.mapmyindia.com/api/places/search/json?query="+queryValue+"&location=28.6321438802915%2C77.2173553802915",
+  "url": "https://atlas.mapmyindia.com/api/places/search/json?query="+queryValue+"&location=28.6321438802915%2C77.2173553802915",
   "method": "GET",
   "headers": {
   "authorization": authorization,
