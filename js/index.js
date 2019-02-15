@@ -3,9 +3,9 @@ var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
 //var WebServicePath ='http://1.255.255.184:8085/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
+//var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath ='http://1.255.255.98:8082/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath ='http://1.255.255.98:8082/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -135,8 +135,8 @@ function commanLogin(){
  	var domainName = userNameValue.split('@')[1];
 	 var jsonToDomainNameSend = new Object();
 	jsonToDomainNameSend["userName"] = domainName;
-	jsonToDomainNameSend["mobilePlatform"] = device.platform;
-	//jsonToDomainNameSend["mobilePlatform"] = "Android";
+	//jsonToDomainNameSend["mobilePlatform"] = device.platform;
+	jsonToDomainNameSend["mobilePlatform"] = "Android";
 	jsonToDomainNameSend["appType"] = "NEXGEN_EXPENZING_TNE_APP";
   	//var res=JSON.stringify(jsonToDomainNameSend);
 	var requestPath = WebServicePath;
@@ -433,50 +433,22 @@ function sendForApprovalBusinessDetails(jsonBEArr,busExpDetailsArr,accountHeadID
 }
 
 function callSendForApprovalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
+
 j('#loading_Cat').show();
 var headerBackBtn=defaultPagePath+'backbtnPage.html';
-j.ajax({
-				  url: window.localStorage.getItem("urlPath")+"SynchSubmitBusinessExpense",
-				  type: 'POST',
-				  dataType: 'json',
-				  crossDomain: true,
-				  data: JSON.stringify(jsonToSaveBE),
-				  success: function(data) {
-				  	if(data.Status=="Success"){
-					  	if(data.hasOwnProperty('DelayStatus')){
-					  		setDelayMessage(data,jsonToSaveBE,busExpDetailsArr);
-					  		 j('#loading_Cat').hide();
-					  	}else{
-						 successMessage = data.Message;
-						 for(var i=0; i<busExpDetailsArr.length; i++ ){
-							var businessExpDetailId = busExpDetailsArr[i];
-							deleteSelectedExpDetails(businessExpDetailId);
-						 }
-						 requestRunning = false;
-						 j('#loading_Cat').hide();
-						 j('#mainHeader').load(headerBackBtn);
-						 j('#mainContainer').load(pageRefSuccess);
-						// appPageHistory.push(pageRef);
-						}
-					}else if(data.Status=="Failure"){
-					 	successMessage = data.Message;
-						requestRunning = false;
-					 	j('#loading_Cat').hide();
-						j('#mainHeader').load(headerBackBtn);
-					 	j('#mainContainer').load(pageRefFailure);
-					 }else{
-						 j('#loading_Cat').hide();
-						successMessage = "Oops!! Something went wrong. Please contact system administrator.";
-						j('#mainHeader').load(headerBackBtn);
-					 	j('#mainContainer').load(pageRefFailure);
-					 }
-					},
-				  error:function(data) {
+
+
+var status = validateExpenseAmtForVoucher(jsonToSaveBE);
+
+		if(status == true){
+		
+		 validateMontlyAmtForVoucherForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure);
+
+		}	
+		else{
 					j('#loading_Cat').hide();
 					requestRunning = false;
-                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
-				  }
-			});
+	}
 }
 
 function createAccHeadDropDown(jsonAccHeadArr){
@@ -752,7 +724,7 @@ function getFormattedDate(input){
    
 }
 
-function validateExpenseDetails(exp_date,exp_from_loc,exp_to_loc,exp_narration,exp_unit,exp_amt,acc_head_id,exp_name_id,currency_id){
+function validateExpenseDetails(exp_date,exp_from_loc,exp_to_loc,exp_narration,exp_unit,exp_amt,acc_head_id,exp_name_id,currency_id,file){
 	if(exp_date == ""){
         alert(window.lang.translate('Expense Date is invalid'));
 		return false;
@@ -820,6 +792,14 @@ function validateExpenseDetails(exp_date,exp_from_loc,exp_to_loc,exp_narration,e
 	if(currency_id == "-1"){
         alert(window.lang.translate('Currency Name is invalid'));
 		return false;
+	}
+
+	if(perUnitDetailsJSON.isAttachmentReq == 'Y'){
+
+		if(file == "" || file ==undefined){
+			alert(window.lang.translate('Attachment is mandatory.'));
+			return false;
+		}
 	}
 	
 		return true;
@@ -1322,6 +1302,9 @@ function setPerUnitDetails(transaction, results){
 			perUnitDetailsJSON["expPerUnitActiveInative"]=row.expPerUnitActiveInative;
 			perUnitDetailsJSON["isErReqd"]=row.isErReqd;
 			perUnitDetailsJSON["limitAmountForER"]=row.limitAmountForER;
+			perUnitDetailsJSON["isAttachmentReq"]=row.isAttachmentReq;
+			showAttachmentmessage();
+
 		    document.getElementById("ratePerUnit").value = row.expRatePerUnit;
 		    document.getElementById("expAmt").value="";
 		    document.getElementById("expUnit").value="";
@@ -1738,6 +1721,7 @@ alert(window.lang.translate('Tap and select Expenses to send for Approval with s
 						  	return;
 	    					}
 				  var accountHeadIdToBeSent=''
+				  exceptionMessage = '';
 					  if(j("#source tr.selected").hasClass("selected")){
 						  j("#source tr.selected").each(function(index, row) {
 							  var busExpDetailId = j(this).find('td.busExpId').text();
@@ -1770,14 +1754,8 @@ alert(window.lang.translate('Tap and select Expenses to send for Approval with s
 							  //get Account Head
 							  var currentAccountHeadID=j(this).find('td.accHeadId').text();
 
-							  if(validateAccountHead(accountHeadIdToBeSent,currentAccountHeadID)==false){
-								  exceptionMessage="Selected expenses should be mapped under Single Expense Type/Account Head."
-									  j('#displayError').children('span').text(exceptionMessage);
-								  j('#displayError').hide().fadeIn('slow').delay(3000).fadeOut('slow');
-								  requestRunning = false;
-								  accountHeadIdToBeSent="";
-							  }else{
-								  accountHeadIdToBeSent=currentAccountHeadID
+							  if(validateAccountHead()==true){
+							  	 accountHeadIdToBeSent=currentAccountHeadID
 
 								  jsonFindBE["accountCodeId"] = j(this).find('td.accountCodeId').text();
 								  jsonFindBE["ExpenseId"] =j(this).find('td.expNameId').text();
@@ -1810,10 +1788,24 @@ alert(window.lang.translate('Tap and select Expenses to send for Approval with s
 
 								  jsonFindBE["imageAttach"] = data; 
 
+								  jsonFindBE["isEntiLineOrVoucherLevel"] =  j(this).find('td.isEntiLineOrVoucherLevel').text();
+								  jsonFindBE["expFixedLimitAmt"] = j(this).find('td.expFixedLimitAmt').text();
+
 								  jsonExpenseDetailsArr.push(jsonFindBE);
 
 								  busExpDetailsArr.push(busExpDetailId);
 								  requestRunning = true;
+								
+							  }else{			  		
+							  	if(exceptionMessage == '' ){
+ 								  exceptionMessage="Selected expenses should be mapped under Single Expense Type/Account Head."
+								 // j('#displayError').children('span').text(exceptionMessage);
+								 // j('#displayError').hide().fadeIn('slow').delay(3000).fadeOut('slow');
+								  requestRunning = false;
+								  accountHeadIdToBeSent="";
+							  	  alert(exceptionMessage);
+
+								}
 							  }
 						  });
 						  
@@ -2268,6 +2260,7 @@ function attachGoogleSearchBox(component){
 //************************************** MAPMYINDIA - START **********************************************//
 
 function attachQueryValues(val){
+
 if(window.localStorage.getItem("MobileMapRole") == 'true' && window.localStorage.getItem("MapProvider") == "MAPMYINDIA") {
 var expFromLoc = document.getElementById("expFromLoc").value;
 var expToLoc = document.getElementById("expToLoc").value;
@@ -2288,7 +2281,6 @@ if(val == 1){
  }
 
 function attachMapMyIndiaSearchBox(query,val){
-//alert("attachGoogleSearchBox");
 
 	if(query.length >= 5 ){
 
@@ -2312,7 +2304,7 @@ function attachMapMyIndiaSearchBox(query,val){
 
   						  },
    				 error: function () {
-        			alert("error");
+        			alert("Connection not Established.");
     }
 			});
 }
@@ -2330,7 +2322,7 @@ console.log("url :  "+tempurl);
 var settings = {
   "async": true,
   "crossDomain": true,
-  "url": "https://atlas.mapmyindia.com/api/places/search/json?query="+queryValue+"&location=28.6321438802915%2C77.2173553802915",
+  "url": "https://cors-anywhere.herokuapp.com/https://atlas.mapmyindia.com/api/places/search/json?query="+queryValue+"&location=28.6321438802915%2C77.2173553802915",
   "method": "GET",
   "headers": {
   "authorization": authorization,
@@ -2445,13 +2437,14 @@ $.ajax(settings).done(function (response) {
   		setUnitBasedOnResponse(response)
 });
 
+
 }else{
 	unitValue = document.getElementById("expUnit");
-	unitValue.value = 1;
+	unitValue.value = '';
  }
 }else{
 	unitValue = document.getElementById("expUnit");
-	unitValue.value = 1;
+	unitValue.value = '';
  }
 }
 
@@ -2953,6 +2946,7 @@ function submitBEWithEA(){
 						  	return;
 	    					}
 				  var accountHeadIdToBeSent=''
+				  exceptionMessage = '';
 					  if(j("#source tr.selected").hasClass("selected")){
 						  j("#source tr.selected").each(function(index, row) {
 							  var busExpDetailId = j(this).find('td.busExpId').text();
@@ -2985,13 +2979,7 @@ function submitBEWithEA(){
 							  //get Account Head
 							  var currentAccountHeadID=j(this).find('td.accHeadId').text();
 
-							  if(validateAccountHead(accountHeadIdToBeSent,currentAccountHeadID)==false){
-								  exceptionMessage="Selected expenses should be mapped under Single Expense Type/Account Head."
-									  j('#displayError').children('span').text(exceptionMessage);
-								  j('#displayError').hide().fadeIn('slow').delay(3000).fadeOut('slow');
-								  requestRunning = false;
-								  accountHeadIdToBeSent="";
-							  }else{
+							  if(validateAccountHead() == true){
 								  accountHeadIdToBeSent=currentAccountHeadID
 
 								  jsonFindBE["accountCodeId"] = j(this).find('td.accountCodeId').text();
@@ -3023,12 +3011,27 @@ function submitBEWithEA(){
 								  //For Android image save
 								  //var data = dataURL.replace(/data:base64,/, '');
 
+								  jsonFindBE["isEntiLineOrVoucherLevel"] =  j(this).find('td.isEntiLineOrVoucherLevel').text();
+								  jsonFindBE["expFixedLimitAmt"] = j(this).find('td.expFixedLimitAmt').text();
+
 								  jsonFindBE["imageAttach"] = data; 
 
 								  jsonExpenseDetailsArr.push(jsonFindBE);
 
 								  busExpDetailsArr.push(busExpDetailId);
 								  requestRunning = true;
+							  	
+							  }else{
+							  	if(exceptionMessage == ''){
+								  exceptionMessage="Selected expenses should be mapped under Single Expense Type/Account Head."
+								  //j('#displayError').children('span').text(exceptionMessage);
+								  //j('#displayError').hide().fadeIn('slow').delay(3000).fadeOut('slow');
+								 // j('#displayError').children('span').text("Selected expenses should be mapped under Single Expense Type/Account Head.");
+								  requestRunning = false;
+								  accountHeadIdToBeSent="";
+								  alert(exceptionMessage);
+								}
+
 							  }
 						  });
                             
@@ -3043,7 +3046,7 @@ function submitBEWithEA(){
                             jsonEmplAdvanceArr.push(jsonFindEA);
 						    });
                                
-				   }      				  
+				   }      			 
 						if(accountHeadIdToBeSent!="" && busExpDetailsArr.length>0){
 						  	 sendForApprovalBusinessDetailsWithEa(jsonExpenseDetailsArr,jsonEmplAdvanceArr,busExpDetailsArr,emplAdvanceDetailsArr,accountHeadIdToBeSent);
 						  }
@@ -3090,52 +3093,19 @@ function sendForApprovalBusinessDetailsWithEa(jsonBEArr,jsonEAArr,busExpDetailsA
 function callSendForApprovalServiceForBEwithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure){
 j('#loading_Cat').show();
 var headerBackBtn=defaultPagePath+'backbtnPage.html';
-j.ajax({
-				  url: window.localStorage.getItem("urlPath")+"SynchSubmitBusinessExpense",
-				  type: 'POST',
-				  dataType: 'json',
-				  crossDomain: true,
-				  data: JSON.stringify(jsonToSaveBE),
-				  success: function(data) {
-				  	if(data.Status=="Success"){
-					  	if(data.hasOwnProperty('DelayStatus')){
-					  		setDelayMessage(data,jsonToSaveBE,busExpDetailsArr);
-					  		 j('#loading_Cat').hide();
-					  	}else{
-						 successMessage = data.Message;
-						 for(var i=0; i<busExpDetailsArr.length; i++ ){
-							var businessExpDetailId = busExpDetailsArr[i];
-							deleteSelectedExpDetails(businessExpDetailId);
-						 }
-                         for(var i=0; i<empAdvArr.length; i++ ){
-							var empAdvId = empAdvArr[i];
-							deleteSelectedEmplAdv(empAdvId);
-						 }
-						 requestRunning = false;
-						 j('#loading_Cat').hide();
-						 j('#mainHeader').load(headerBackBtn);
-						 j('#mainContainer').load(pageRefSuccess);
-						// appPageHistory.push(pageRef);
-						}
-					}else if(data.Status=="Failure"){
-					 	successMessage = data.Message;
-						requestRunning = false;
-					 	j('#loading_Cat').hide();
-						j('#mainHeader').load(headerBackBtn);
-					 	j('#mainContainer').load(pageRefFailure);
-					 }else{
-						 j('#loading_Cat').hide();
-						successMessage = "Oops!! Something went wrong. Please contact system administrator.";
-						j('#mainHeader').load(headerBackBtn);
-					 	j('#mainContainer').load(pageRefFailure);
-					 }
-					},
-				  error:function(data) {
+
+
+var status = validateExpenseAmtForVoucher(jsonToSaveBE);
+
+		if(status == true){
+		
+		 validateMontlyAmtForVoucherForBEWithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure);
+
+		}	
+		else{
 					j('#loading_Cat').hide();
 					requestRunning = false;
-                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
-				  }
-			});
+	}
 }
 
 function openNav() {

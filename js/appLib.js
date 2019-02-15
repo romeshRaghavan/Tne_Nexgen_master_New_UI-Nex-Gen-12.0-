@@ -140,7 +140,7 @@ if (window.openDatabase) {
 		//t.executeSql("CREATE TABLE IF NOT EXISTS employeeDetails (id INTEGER PRIMARY KEY ASC, firstName TEXT, lastName TEXT, gradeId INTEGER, budgetingStatus CHAR(1),unitId INTEGER, status TEXT)");
 		t.executeSql("CREATE TABLE IF NOT EXISTS currencyMst (currencyId INTEGER PRIMARY KEY ASC, currencyName TEXT)");
 		t.executeSql("CREATE TABLE IF NOT EXISTS accountHeadMst (accountHeadId INTEGER PRIMARY KEY ASC, accHeadName TEXT)");
-		t.executeSql("CREATE TABLE IF NOT EXISTS expNameMst (id INTEGER PRIMARY KEY ASC,expNameMstId INTEGER, expName TEXT, expIsFromToReq CHAR(1), accCodeId INTEGER NOT NULL, accHeadId INTEGER NOT NULL, expIsUnitReq CHAR(1), expRatePerUnit Double, expFixedOrVariable CHAR(1), expFixedLimitAmt Double,expPerUnitActiveInative CHAR(1),isErReqd CHAR(1),limitAmountForER Double)");
+		t.executeSql("CREATE TABLE IF NOT EXISTS expNameMst (id INTEGER PRIMARY KEY ASC,expNameMstId INTEGER, expName TEXT, expIsFromToReq CHAR(1),accCodeId INTEGER NOT NULL,accHeadId INTEGER NOT NULL,  expIsUnitReq CHAR(1),expRatePerUnit Double, expFixedOrVariable CHAR(1), expFixedLimitAmt Double,expPerUnitActiveInative CHAR(1),isErReqd CHAR(1),limitAmountForER Double,isAttachmentReq CHAR(1),isEntiLineOrVoucherLevel CHAR(1),periodicity TEXT,isUnitPeriodic TEXT)");
 		t.executeSql("CREATE TABLE IF NOT EXISTS businessExpDetails (busExpId INTEGER PRIMARY KEY ASC, accHeadId INTEGER REFERENCES accountHeadMst(accHeadId), expNameId INTEGER REFERENCES expNameMst(expNameId),expDate DATE, expFromLoc TEXT, expToLoc TEXT, expNarration TEXT, expUnit INTEGER, expAmt Double, currencyId INTEGER REFERENCES currencyMst(currencyId),isEntitlementExceeded TEXT,busExpAttachment BLOB,wayPointunitValue TEXT)");
 		t.executeSql("CREATE TABLE IF NOT EXISTS walletMst (walletId INTEGER PRIMARY KEY ASC AUTOINCREMENT, walletAttachment  BLOB)");
 		t.executeSql("CREATE TABLE IF NOT EXISTS travelModeMst (travelModeId INTEGER PRIMARY KEY ASC, travelModeName TEXT)");
@@ -217,7 +217,7 @@ function saveBusinessDetails(status){
 			file = fileTempCameraBE; 
 		}
 		
-		if(validateExpenseDetails(exp_date,exp_from_loc,exp_to_loc,exp_narration,exp_unit,exp_amt,acc_head_id,exp_name_id,currency_id)){
+		if(validateExpenseDetails(exp_date,exp_from_loc,exp_to_loc,exp_narration,exp_unit,exp_amt,acc_head_id,exp_name_id,currency_id,file)){
 		 
 		j('#loading_Cat').show();			  
 		  
@@ -474,6 +474,9 @@ function fetchExpenseClaim() {
 				j('<td></td>').attr({ class: ["ERLimitAmt","displayNone"].join(' ') }).text(row.limitAmountForER).appendTo(rowss);
 				j('<td></td>').attr({ class: ["isEntitlementExceeded","displayNone"].join(' ') }).text(row.isEntitlementExceeded).appendTo(rowss);
 				j('<td></td>').attr({ class: ["wayPoint","displayNone"].join(' ') }).text(row.wayPointunitValue).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isAttachmentReq","displayNone"].join(' ') }).text(row.isAttachmentReq).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isEntiLineOrVoucherLevel","displayNone"].join(' ') }).text(row.isEntiLineOrVoucherLevel).appendTo(rowss);
+				j('<td></td>').attr({ class: ["expFixedLimitAmt","displayNone"].join(' ') }).text(row.expFixedLimitAmt).appendTo(rowss);
 			}	
 					
 			j("#source tr").click(function(){ 
@@ -499,17 +502,30 @@ function fetchExpenseClaim() {
     j('#mainHeader').load(header);
  }
 
- function validateAccountHead(accountHeadIdToBeSent,currentAccHeadId){
-	if(accountHeadIdToBeSent==""){
-		return true;
-	}else{
-		if(parseFloat(accountHeadIdToBeSent)!=parseFloat(currentAccHeadId)==true){
-			
-			return false;
-		}else{
-			return true;
-		}
+ function validateAccountHead(){
+ 	var map = new Map();
+
+	if(j("#source tr.selected").hasClass("selected")){
+				j("#source tr.selected").each(function(index, row) {
+
+						  	 var currentAccountHeadID=j(this).find('td.accHeadId').text();
+
+				if(map.has(currentAccountHeadID)){
+			    	var value = map.get(currentAccountHeadID);
+
+			    	map.set(currentAccountHeadID, currentAccountHeadID);
+			    }else{
+			    	map.set(currentAccountHeadID, currentAccountHeadID);
+			    }
+
+
+				 });
 	}
+	 if(map.size ==  1){
+			    	return true;
+			    }else{
+			    	return false;
+			    }
  }
 
 
@@ -646,6 +662,10 @@ function synchronizeBEMasterData() {
 								var exp_per_unit ;
 								var exp_fixed_or_var ;
 								var exp_fixed_limit_amt;
+								var isAttachmentReq;
+								var isEntiLineOrVoucherLevel;
+								var periodicity;
+								var isUnitPeriodic;
 								
 				
 								if(typeof stateArr.FixedOrVariable != 'undefined') {
@@ -689,11 +709,32 @@ function synchronizeBEMasterData() {
 								}else{
 									limitAmountForER = 0.0;
 								}
+								if(typeof stateArr.IsAttachmentReq != 'undefined') {
+									isAttachmentReq = stateArr.IsAttachmentReq;
+								}else{
+									isAttachmentReq = 'N';
+								}
+								if(typeof stateArr.IsEntiLineOrVoucherLevel != 'undefined') {
+									isEntiLineOrVoucherLevel = stateArr.IsEntiLineOrVoucherLevel;
+								}else{
+									isEntiLineOrVoucherLevel = 'V';
+								}
+
+								if(typeof stateArr.Periodicity != 'undefined') {
+									periodicity = stateArr.Periodicity;
+								}else{
+									periodicity = 'N';
+								}
+								if(typeof stateArr.IsUnitPeriodic != 'undefined') {
+									isUnitPeriodic = stateArr.IsUnitPeriodic;
+								}else{
+									isUnitPeriodic = 'N';
+								}
 								//console.log("exp_id:"+exp_id+"  -exp_name:"+exp_name+"  -exp_is_from_to_req:"+exp_is_from_to_req+"  -acc_code_id:"+acc_code_id+"  -acc_head_id:"+acc_head_id+"  -exp_is_unit_req:"+exp_is_unit_req+"  -exp_per_unit:"+exp_per_unit+"  -exp_fixed_or_var:"+exp_fixed_or_var+"  -exp_fixed_limit_amt:"+exp_fixed_limit_amt)										
-								t.executeSql("INSERT INTO expNameMst ( expNameMstId,expName, expIsFromToReq , accCodeId , accHeadId , expIsUnitReq , expRatePerUnit, expFixedOrVariable , expFixedLimitAmt,expPerUnitActiveInative,isErReqd,limitAmountForER) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)", [exp_id,exp_name,exp_is_from_to_req, acc_code_id,acc_head_id,exp_is_unit_req,exp_per_unit,exp_fixed_or_var,exp_fixed_limit_amt,exp_per_unit_active_inactive,isErReqd,limitAmountForER]);
-							}
+							t.executeSql("INSERT INTO expNameMst ( expNameMstId,expName, expIsFromToReq , accCodeId , accHeadId , expIsUnitReq , expRatePerUnit, expFixedOrVariable , expFixedLimitAmt,expPerUnitActiveInative,isErReqd,limitAmountForER,isAttachmentReq,isEntiLineOrVoucherLevel,periodicity,isUnitPeriodic) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [exp_id,exp_name,exp_is_from_to_req, acc_code_id,acc_head_id,exp_is_unit_req,exp_per_unit,exp_fixed_or_var,exp_fixed_limit_amt,exp_per_unit_active_inactive,isErReqd,limitAmountForER,isAttachmentReq,isEntiLineOrVoucherLevel,periodicity,isUnitPeriodic]);							}
 						}  
 					});
+                       
                        
                       		mydb.transaction(function (t) {
 					t.executeSql("DELETE FROM currencyConversionMst");
@@ -1842,6 +1883,9 @@ function fetchEmployeeAdvance() {
 				j('<td></td>').attr({ class: ["ERLimitAmt","displayNone"].join(' ') }).text(row.limitAmountForER).appendTo(rowss);
 				j('<td></td>').attr({ class: ["isEntitlementExceeded","displayNone"].join(' ') }).text(row.isEntitlementExceeded).appendTo(rowss);
 				j('<td></td>').attr({ class: ["wayPoint","displayNone"].join(' ') }).text(row.wayPointunitValue).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isAttachmentReq","displayNone"].join(' ') }).text(row.isAttachmentReq).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isEntiLineOrVoucherLevel","displayNone"].join(' ') }).text(row.isEntiLineOrVoucherLevel).appendTo(rowss);
+				j('<td></td>').attr({ class: ["expFixedLimitAmt","displayNone"].join(' ') }).text(row.expFixedLimitAmt).appendTo(rowss);
 			}	
 					
 			j("#source tr").click(function(){ 
@@ -2016,6 +2060,9 @@ function fetchBusinessExpNdEmployeeAdv() {
 				j('<td></td>').attr({ class: ["ERLimitAmt","displayNone"].join(' ') }).text(row.limitAmountForER).appendTo(rowss);
 				j('<td></td>').attr({ class: ["isEntitlementExceeded","displayNone"].join(' ') }).text(row.isEntitlementExceeded).appendTo(rowss);
 				j('<td></td>').attr({ class: ["wayPoint","displayNone"].join(' ') }).text(row.wayPointunitValue).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isAttachmentReq","displayNone"].join(' ') }).text(row.isAttachmentReq).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isEntiLineOrVoucherLevel","displayNone"].join(' ') }).text(row.isEntiLineOrVoucherLevel).appendTo(rowss);
+				j('<td></td>').attr({ class: ["expFixedLimitAmt","displayNone"].join(' ') }).text(row.expFixedLimitAmt).appendTo(rowss);
 			}	
 					
 			j("#source tr").click(function(){ 
@@ -2172,6 +2219,9 @@ function fetchExpenseClaimFromMain() {
 				j('<td></td>').attr({ class: ["ERLimitAmt","displayNone"].join(' ') }).text(row.limitAmountForER).appendTo(rowss);
 				j('<td></td>').attr({ class: ["isEntitlementExceeded","displayNone"].join(' ') }).text(row.isEntitlementExceeded).appendTo(rowss);
 				j('<td></td>').attr({ class: ["wayPoint","displayNone"].join(' ') }).text(row.wayPointunitValue).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isAttachmentReq","displayNone"].join(' ') }).text(row.isAttachmentReq).appendTo(rowss);
+				j('<td></td>').attr({ class: ["isEntiLineOrVoucherLevel","displayNone"].join(' ') }).text(row.isEntiLineOrVoucherLevel).appendTo(rowss);
+				j('<td></td>').attr({ class: ["expFixedLimitAmt","displayNone"].join(' ') }).text(row.expFixedLimitAmt).appendTo(rowss);
 			}	
 					
 			j("#source tr").click(function(){ 
@@ -2491,3 +2541,335 @@ function synchronizeWhiteListMasterData() {
         function onFail(message) {
     alert('Failed because: ' + message);
 }
+
+
+
+//********************  Methods For Attachment -- Start ******************************//
+
+ function showAttachmentmessage(){
+      	var isAttachmentRequired = perUnitDetailsJSON.isAttachmentReq;
+
+      	if(isAttachmentRequired == 'Y'){
+		j('#errorMsgAreaForAttachment').children('span').text("Attachment is mandatory");
+      	}else{
+      		j('#errorMsgAreaForAttachment').children('span').text("");
+      	}
+}
+
+//********************  Methods For Attachment -- End ******************************//
+
+
+function validateExpenseAmtForVoucher(jsonToSaveEA){
+
+        var expenses = jsonToSaveEA.expenseDetails;
+		var map = new Map();
+		var msg = "";
+
+		console.log("expenses : "+JSON.stringify(expenses));
+
+
+		for (var i = 0; i < expenses.length; i++) {
+				//alert("expenses[i].isEntiLineOrVoucherLevel : "+expenses[i].isEntiLineOrVoucherLevel);
+
+		    if(expenses[i].isEntiLineOrVoucherLevel==("V") && expenses[i].expFixedLimitAmt != 0){
+
+		    	var expId = expenses[i].ExpenseId;
+			    var expName = expenses[i].ExpenseName;
+			    var isEntiLineOrVoucherLevel = expenses[i].isEntiLineOrVoucherLevel;
+			 	var ERLimitAmt = expenses[i].ERLimitAmt;
+			  	var amount = expenses[i].amount;
+			  	var ERFixedLimit = expenses[i].expFixedLimitAmt;
+			  	var keyForMap = expId+"$"+ERFixedLimit+"$"+expName;
+			    
+			    if(map.has(keyForMap)){
+			    	var value = map.get(keyForMap);
+
+			    	map.set(keyForMap, parseInt(value)+parseInt(amount));
+			    }else{
+			    	map.set(keyForMap, parseInt(amount));
+			    }
+				 
+		    }
+
+		}
+		   
+	   map.forEach(function(value, key, map) {
+
+		   	var array = new Array();
+		   	array = key.split("$");
+
+		   	var expId = array[0];
+
+		   	var expLimitAmt = array[1];
+	
+		   	var expName = array[2];
+
+
+		   	console.log("expId expLimitAmt expName : "+expId+""+expLimitAmt+""+expName);
+
+		 if(parseInt(expLimitAmt) < parseInt(value)){
+
+		 	msg = msg +" Amount entered "+value+" exceeds defined entitled limit of "+expLimitAmt+" for Expense : "+expName;		 		
+			msg = msg+'\n';
+
+		   	}
+
+  		console.log('key: "' + key + '", value: "' + value + '"');
+});
+
+		   if(msg != ""){
+		   	 var entitlementMsg = confirm(msg);
+
+		  	 if (entitlementMsg == true) {
+  				 return true;
+  			} else {
+   		 		return false;
+  					}
+		   }else{
+		   		return true;
+		   }
+
+	
+}
+
+
+//********************  Methods For Entitlement Changes For Buss-Exp-EA -- Start ******************************//
+
+
+
+function validateMontlyAmtForVoucherForBEWithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure){
+	//alert("validateMontlyAmtForVoucher :");
+	//setTimeout(function(){
+
+				j.ajax({
+				  url: window.localStorage.getItem("urlPath")+"ValidateBusExpPeriodictyWebService",
+				  type: 'POST',
+				  dataType: 'json',
+				  crossDomain: true,
+				  data: JSON.stringify(jsonToSaveBE),
+				  success: function(data) {
+				  	if(data.Status=="Success"){
+					  	if(data.hasOwnProperty('DelayStatus')){
+					  		setDelayMessage(data,jsonToSaveBE,busExpDetailsArr);
+					  		 j('#loading_Cat').hide();
+					  	}else{
+						 successMessage = data.Message;
+					
+
+				if(successMessage != ""){
+		   	 var confirmBox = confirm(successMessage);
+
+		  	 if (confirmBox == true) {
+  				 approvalServiceForBEwithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure);
+  			} else {
+   		 		entitlementMsg =  false;
+  					}
+		   }else{
+		   		approvalServiceForBEwithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure);
+		   }
+
+
+						 requestRunning = false;
+						 j('#loading_Cat').hide();
+						 //j('#mainHeader').load(headerBackBtn);
+						 //j('#mainContainer').load(pageRefSuccess);
+						// appPageHistory.push(pageRef);
+						}
+					}else if(data.Status=="Failure"){
+					 	successMessage = data.Message;
+						requestRunning = false;
+					 	j('#loading_Cat').hide();
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }else{
+						 j('#loading_Cat').hide();
+						successMessage = "Oops!! Something went wrong. Please contact system administrator.";
+						requestRunning = false;
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }
+					},
+				  error:function(data) {
+					j('#loading_Cat').hide();
+					requestRunning = false;
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+				 		 }
+					});
+				
+//}, 100);
+			}
+
+
+function approvalServiceForBEwithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure){
+	j('#loading_Cat').show();
+var headerBackBtn=defaultPagePath+'backbtnPage.html';
+
+	j.ajax({
+				  url: window.localStorage.getItem("urlPath")+"SynchSubmitBusinessExpense",
+				  type: 'POST',
+				  dataType: 'json',
+				  crossDomain: true,
+				  data: JSON.stringify(jsonToSaveBE),
+				  success: function(data) {
+				  	if(data.Status=="Success"){
+					  	if(data.hasOwnProperty('DelayStatus')){
+					  		setDelayMessage(data,jsonToSaveBE,busExpDetailsArr);
+					  		 j('#loading_Cat').hide();
+					  	}else{
+						 successMessage = data.Message;
+						 for(var i=0; i<busExpDetailsArr.length; i++ ){
+							var businessExpDetailId = busExpDetailsArr[i];
+							deleteSelectedExpDetails(businessExpDetailId);
+						 }
+                         for(var i=0; i<empAdvArr.length; i++ ){
+							var empAdvId = empAdvArr[i];
+							deleteSelectedEmplAdv(empAdvId);
+						 }
+						 requestRunning = false;
+						 j('#loading_Cat').hide();
+						 j('#mainHeader').load(headerBackBtn);
+						 j('#mainContainer').load(pageRefSuccess);
+						// appPageHistory.push(pageRef);
+						}
+					}else if(data.Status=="Failure"){
+					 	successMessage = data.Message;
+						requestRunning = false;
+					 	j('#loading_Cat').hide();
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }else{
+						 j('#loading_Cat').hide();
+						successMessage = "Oops!! Something went wrong. Please contact system administrator.";
+						requestRunning = false;
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }
+					},
+				  error:function(data) {
+					j('#loading_Cat').hide();
+					requestRunning = false;
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+				 		 }
+					});
+}
+
+//********************  Methods For Entitlement Changes For Buss-Exp-EA -- End ******************************//
+
+//********************  Methods For Entitlement Changes For Buss-Exp -- Start ******************************//
+
+function validateMontlyAmtForVoucherForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
+j('#loading_Cat').show();
+
+				j.ajax({
+				  url: window.localStorage.getItem("urlPath")+"ValidateBusExpPeriodictyWebService",
+				  type: 'POST',
+				  dataType: 'json',
+				  crossDomain: true,
+				  data: JSON.stringify(jsonToSaveBE),
+				  success: function(data) {
+				  	if(data.Status=="Success"){
+					  	if(data.hasOwnProperty('DelayStatus')){
+					  		setDelayMessage(data,jsonToSaveBE,busExpDetailsArr);
+					  		 j('#loading_Cat').hide();
+					  	}else{
+						 successMessage = data.Message;
+					
+
+				if(successMessage != ""){
+		   	 var confirmBox = confirm(successMessage);
+
+		  	 if (confirmBox == true) {
+  				 approvalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure);
+  			} else {
+   		 		entitlementMsg =  false;
+  					}
+		   }else{
+  				 approvalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure);
+		   }
+
+
+						 requestRunning = false;
+						 j('#loading_Cat').hide();
+						 //j('#mainHeader').load(headerBackBtn);
+						 //j('#mainContainer').load(pageRefSuccess);
+						// appPageHistory.push(pageRef);
+						}
+					}else if(data.Status=="Failure"){
+					 	successMessage = data.Message;
+						requestRunning = false;
+					 	j('#loading_Cat').hide();
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }else{
+						 j('#loading_Cat').hide();
+						successMessage = "Oops!! Something went wrong. Please contact system administrator.";
+						requestRunning = false;
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }
+					},
+				  error:function(data) {
+					j('#loading_Cat').hide();
+					requestRunning = false;
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+				 		 }
+					});
+				
+//}, 100);
+			}
+
+
+
+function approvalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
+j('#loading_Cat').show();
+
+var headerBackBtn=defaultPagePath+'backbtnPage.html';
+
+j.ajax({
+				  url: window.localStorage.getItem("urlPath")+"SynchSubmitBusinessExpense",
+				  type: 'POST',
+				  dataType: 'json',
+				  crossDomain: true,
+				  data: JSON.stringify(jsonToSaveBE),
+				  success: function(data) {
+				  	if(data.Status=="Success"){
+					  	if(data.hasOwnProperty('DelayStatus')){
+					  		setDelayMessage(data,jsonToSaveBE,busExpDetailsArr);
+					  		 j('#loading_Cat').hide();
+					  	}else{
+						 successMessage = data.Message;
+						 for(var i=0; i<busExpDetailsArr.length; i++ ){
+							var businessExpDetailId = busExpDetailsArr[i];
+							deleteSelectedExpDetails(businessExpDetailId);
+						 }
+						 requestRunning = false;
+						 j('#loading_Cat').hide();
+						 j('#mainHeader').load(headerBackBtn);
+						 j('#mainContainer').load(pageRefSuccess);
+						// appPageHistory.push(pageRef);
+						}
+					}else if(data.Status=="Failure"){
+					 	successMessage = data.Message;
+						requestRunning = false;
+					 	j('#loading_Cat').hide();
+						j('#mainHeader').load(headerBackBtn);
+					 	j('#mainContainer').load(pageRefFailure);
+					 }else{
+						 j('#loading_Cat').hide();
+						 requestRunning = false;
+						 successMessage = "Oops!! Something went wrong. Please contact system administrator.";
+						 j('#mainHeader').load(headerBackBtn);
+					 	 j('#mainContainer').load(pageRefFailure);
+					 }
+					},
+				  error:function(data) {
+					j('#loading_Cat').hide();
+					requestRunning = false;
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+
+						  }
+					});
+				
+}
+
+//********************  Methods For Entitlement Changes For Buss-Exp -- End ******************************//
