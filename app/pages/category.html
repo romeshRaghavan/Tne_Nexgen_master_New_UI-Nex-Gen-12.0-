@@ -1,14 +1,14 @@
  <script type="text/javascript">
-		var lang = new Lang();
-		lang.dynamic('th', 'js/langpack/th.json');
+        var lang = new Lang();
+        lang.dynamic('th', 'js/langpack/th.json');
         lang.dynamic('ru','js/langpack/russian.json');
         lang.dynamic('ae','js/langpack/arabic.json');
         lang.dynamic('tamil','js/langpack/tamil.json');
         lang.dynamic('hindi','js/langpack/hindi.json');
         lang.dynamic('ka','js/langpack/kannada.json');
-		lang.init({
-			defaultLang: 'en'
-		});
+        lang.init({
+            defaultLang: 'en'
+        });
         var smsWatchFlag=window.localStorage.getItem("smsWatchStatus");
         var smartClaimsRole=window.localStorage.getItem("smartClaimsViaSMSOnMobile");
          if(smartClaimsRole){
@@ -18,7 +18,7 @@
         }
 </script>
  <script>
- 	hideTRIcons();
+    hideTRIcons();
     hideSmartClaims();
     hideBusinessExpense();
  </script>
@@ -83,6 +83,7 @@
         */
         .jssorb05 {
             position: absolute;
+            display: none;
         }
         .jssorb05 div, .jssorb05 div:hover, .jssorb05 .av {
             position: absolute;
@@ -135,11 +136,7 @@
             <div style="position:absolute;display:block;background:url('img/loading.gif') no-repeat center center;top:0px;left:0px;width:100%;height:100%;"></div>
         </div>
         <div data-u="slides" style="cursor:default;position:relative;top:0px;left:0px;width:1300px;height:500px;overflow:hidden;">
-
-            <div data-p="225.00">
-                <img data-u="image" src="img/red.png" />
-            </div>
-
+            <div data-p="225.00"></div>
         </div>
         <!-- Bullet Navigator -->
         <div data-u="navigator" class="jssorb05" style="bottom:5px;right:5px;" data-autocenter="1">
@@ -152,21 +149,36 @@
     </div>
     <div class="col-md-6 accordions">
          <section class="ac-container">
-               <div id="businessExpenseTab">
-				<label lang="en"onclick="createBusiExpMain();">Business Expense</label>
-				</div>
-				<div id="CategoryTrRoleID">
-				<label  lang="en" onclick="createTravelMain();" style="background: #8fae51 url(images/ar-n.png) no-repeat right;" for="ac-2">Travel Management</label>
-                </div>
-				<div>
-               <label lang="en" onclick="createWallet();" style="background: #8775a7 url(images/ar-n.png) no-repeat right;" for="ac-2">My Receipts Wallet</label>
-				</div>
-             <div id="smartClaimsID">
-               <label lang="en" onclick="viewMessages();" style="background: #b75353 url(images/ar-n.png) no-repeat right;" for="ac-2">Smart Expenses</label>
-                </div>
+           <div id="businessExpenseTab" class="allcats">
+                <span class="claimicon"><i class="fa fa-money" aria-hidden="true"></i></span>
+                <label lang="en"onclick="createBusiExpMain();" style="">
+                    Claim Expense 
+                    <h5>Add Expense Claims, Request Advance</h5>
+                </label>
+                <!--<span class="claimnum1">15</span>-->
+            </div>
+            <div id="CategoryTrRoleID" class="allcats">
+                <span class="claimicon"><i class="fa fa-plane" aria-hidden="true"></i></span>
+                <label  lang="en" onclick="createTravelMain();" style="" for="ac-2">
+                    Travel Management
+                    <h5>Add Travel Requests, Travel Settelments </h5>
+                </label>
+                <!--<span class="claimnum2">04</span>-->
+            </div>
+            <!--<div class="allcats">
+                <span class="claimicongift"><i class="fa fa-briefcase" aria-hidden="true"></i> </span>
+                <label lang="en" onclick="createWallet();" style="" for="ac-2">
+                My Receipts Wallet</label>
+                <span class="claimnum3">10</span>
+            </div>
+            <div id="smartClaimsID" class="allcats">
+                <span class="claimicongift"><i class="fa fa-gift" aria-hidden="true"></i></span>
+                <label lang="en" onclick="viewMessages();" style="" for="ac-2">
+                Smart Expenses</label>
+                <span class="claimnum4">200</span>
+            </div>-->
          </section>
     </div>
-<br>
     <!-- #endregion Jssor Slider End -->
    <!--  <center><a><p style="color: #19CFEF;font: caption;"> <b lang="en" onclick="showHelpMenu()">Help</b></p></a></center>-->
 </body>

@@ -1,15 +1,15 @@
 
 <script type="text/javascript">
-		var lang = new Lang();
-		lang.dynamic('th', 'js/langpack/th.json');
+    var lang = new Lang();
+    lang.dynamic('th', 'js/langpack/th.json');
         lang.dynamic('ru','js/langpack/russian.json');
         lang.dynamic('ae','js/langpack/arabic.json');
         lang.dynamic('tamil','js/langpack/tamil.json');
         lang.dynamic('hindi','js/langpack/hindi.json');
         lang.dynamic('ka','js/langpack/kannada.json');
-		lang.init({
-			defaultLang: 'en'
-		});
+    lang.init({
+      defaultLang: 'en'
+    });
 </script>
 <script>
  var headerValue=headerMsg;
@@ -18,24 +18,26 @@
 // hideEAMenus(); 
    hideMultilanguage();
 </script>
-
 <div class="topfixednavigate" > 
-<a href="#" class="backarrowbtn">
-<img src="images/left-arrow.png" width="15px" height="25px" onclick="goBack();"/>
-<img class="expenzingImg" src="images/Expenzing_Square.png" onclick="goBack();"/></a>
+  <span onclick="goBack();" class="backbluebtn"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
+  <img class="expenzingImg" src="images/Expenzing_Square.png" onclick="goBack();"/>
   <H4 id="headerId" class="headerposition"></H4>
-    <spen id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a lang="en" href="#" onclick="showSyncMaster()" >Sync Masters</a>
-  <a href="#" id='multiLang' onclick="showMultiLanguag()" lang="en">Settings</a>
-  <!--<a lang="en"  href="#" onclick="showHelpMenu()">Help</a>-->
-</spen>
- 
-<span style="font-size:30px;cursor:pointer;position: absolute;left: auto;top: inherit;right: inherit;padding-right: 16px;padding-top: 10px;" align="right" onclick="openNav();"><img src="css/cssimages/nav-icon.png" width="30px" height="25px"/></span>
+  <span id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a lang="en" href="#" onclick="showSyncMaster()" >Sync Masters</a>
+    <a href="#" id='multiLang' onclick="showMultiLanguag()" lang="en">Settings</a>
+    <!--<a lang="en"  href="#" onclick="showHelpMenu()">Help</a>-->
+  </span>
+
+<div class="dropdown">
+    <span class="toprightmenu dropdown-toggle" data-toggle="dropdown" align="right"><i class="fa fa-bars" aria-hidden="true"></i></span>
+    <ul class="dropdown-menu">
+      <li><a lang="en" href="#" onclick="showSyncMaster()" >Sync Masters</a></li>
+      <li><a href="#" id='multiLang' onclick="showMultiLanguag()" lang="en">Settings</a></li>
+    </ul>
+</div>
   <div lang="en" style="display:none" id="syncSuccessMsg" class="displaysynctext">
-               
   </div>
   <div lang="en" style="display:none" id="syncFailureMsg" class="displaysynctext">
-               
   </div>
 </div>

@@ -21,8 +21,9 @@ body a{
 }
 h1,h2,h3,h4,h5,h6{
    margin:0;		
-   font-family: 'Lato-Regular';
-   font-weight:700;
+   font-family: sans-serif;
+   color: #333;
+  /* font-weight:700;*/
 
 }	
 p{
@@ -576,7 +577,7 @@ li.resp-tab-item1.resp-tab-active{
 	font-weight: 700;
 }
 .resp-tabs-container ,.resp-tabs-container1{
-	padding: 0px;
+	padding: 0;
 	clear: left;
 }
 h2.resp-accordion,h2.resp-accordion1 {
@@ -1037,39 +1038,40 @@ li.com a:hover{
   background-color: #009e5d;
 }
 .ac-container{
-    margin: 10px auto 28px auto;
+    margin: 0 auto;
     text-align: left;
-    width: 99%
+    width: 100%
 }
-
-.ac-container label{
-    padding: 12px 6px;
+.ac-container label {
+    padding: 15px 6px 15px 60px;
     position: relative;
-    z-index: 20;
+    /*z-index: 20;*/
     display: block;
-    height: 84px;
     cursor: pointer;
-    color: #fff;
-    line-height: 54px;
-    font-size: 25px;
+    color: #000;
+    line-height: 30px;
+    font-size: 18px;
+    height: 75px;
     /* background: #0675a2; */
-    border: 1px solid rgba(221, 221, 221, 0.8);
+   /* border: 1px solid rgba(221, 221, 221, 0.8);*/
     font-weight: 400;
-    background: #0675a2 url(../images/ar-n.png) no-repeat right ;
-    border-radius: 10px;
-    
+    background-image: url(../images/ar-n.png) no-repeat right ;
+    /*border-radius: 10px;*/
+    border-bottom: 1px solid #ccc;
+}
+.ac-container #smartClaimsID label:last-child {
+  border-bottom: none;
 }
 .ac-containermarker{
-    position: absolute;
+  position: absolute;
 	width: 24px;
 	height: 24px;
 	right: 13px;
 	top: 28px;
 	background: transparent url(../images/ar-n.png) no-repeat center center;
 }
-
 .ac-container label:hover{
-	    background: #0675a2;
+	    background: #f5f5f5;
 }
 .ac-container input:checked + label,
 .ac-container input:checked + label:hover{
@@ -1085,7 +1087,6 @@ li.com a:hover{
 	height: 24px;
 	right: 0px;
 	top: 28px;
-	background: transparent url(../images/ar-n.png) no-repeat center center;	
 }
 .ac-container input:checked + label:hover:after{
 	background-image: url(../images/arrow_up.png);
@@ -3060,16 +3061,18 @@ a.hvr-hollow:hover,a.hvr-hollow:focus,a.hvr-hollow:active {
 		width: 100%;
 		margin: 0 auto 2em;
 	}
-		body h1 {
-		margin: 1em 0 1em;
-		font-size:1.1em;
-		color: #14a6c5;
-	}
+body h1 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #34495e;
+    padding: 6px 0;
+    border-radius: 4px;
+  }
 }
 @media (max-width:384px){
 	.resp-tab-item {
 		font-size: 11px;
-		width: 33.329%;
+		width: 25%;
 		padding: 17px 0px;
 	}
 	.twitter {
@@ -3176,3 +3179,4 @@ a.hvr-hollow:hover,a.hvr-hollow:focus,a.hvr-hollow:active {
 	}
 }
 #mySidenav a:last-child{display:none;}
+

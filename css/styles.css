@@ -13,10 +13,10 @@
   text-align:center;
   border-bottom: 1px solid #14a6c5;
 }*/
-
-
-
-
+:focus {
+    outline: none !important;
+}
+ul {margin: 0; padding: 0;}
 .modal-footer {
 	border-top: 0px;
 }
@@ -49,7 +49,8 @@
 	display: block;
 	font-weight: bold;
 	text-align: center;
-    padding-left: 5px
+    padding-left: 5px;
+   /* z-index: 9;*/
 }
 .allexpebtn {
 	text-align:center;
@@ -111,14 +112,19 @@
 	height:80px;
 }
 .footer {
-	border-top: 1px solid #e5e5e5;
-	color: #ffffff;
+	color: #000;
 	font-size: 13px;
 	font-weight: normal;
-	margin: 0 0 15px;
-	padding-top: 15px;
+	margin: 0;
+	padding: 8px 0;
 	text-align: center;
+	float: left;
+	width: 100%;
+	background-color: #ccc;
+	position: fixed;
+	bottom: 0;
 }
+.footer p {font-size: 12px; color: #666}
 .addanexpense p {
 	color: #454545;
 	font-weight: bold;
@@ -134,9 +140,10 @@
 	cursor:pointer;
 }
 #source tr td {
-	border: 2px #DDD solid;
-	padding: 2px;
-	cursor: pointer;
+    border: 1px #b0b5b9 solid;
+    padding: 8px 3px;
+    cursor: pointer;
+    font-size: 12px;
 }
 .selected {
 	background-color: brown !important;
@@ -195,24 +202,26 @@
 #mainContainer {
     float: left;
     overflow-x: hidden;
-    padding: 5% 0% 5%;
+    padding: 40px 0 0 0;
     width: 100%;
+    /*background-color: #fff;*/
 }
 .selected {
-	background-color: #14A6C5 !important;
+	background-color: #e8e8e8 !important;
 }
 .displayNone {
 	display: none;
 }
 .headerposition {
-    bottom: 6px;
+    top: 12px;
     display: block;
     float: none;
-    left: 17%;
-    margin: 0 auto;
+    left: 50px;
+    margin: 0;
     padding: 0;
     position: absolute;
     text-align: center;
+    color: #58a7c4;
 }
 #errorSpan {
 	font-size: 11px;
@@ -375,7 +384,6 @@
    z-index: 99;
    text-align: center;
 }
-
 #loading-image_Cat {
   position: absolute;
   top: 100px;
@@ -383,40 +391,21 @@
   z-index: 100;
   max-width: 35%;
 }
-.expenzingImg{
+.expenzingMainImg, .expenzingImg {
     position: absolute;
-    top: -2px;
-    left: 63%;
-    z-index: 100;
-    max-width: 200%;
-}
-.expenzingMainImg{
-	position: absolute;
-    top: 11px;
-    left: 4%;
-    z-index: 100;
-    max-width: 8%;
+    top: 8px;
+    left: 20px;
+    z-index: 9;
+    width: 25px;
 }
 .selectionDeleteBEBtns{
-	position: absolute;
-    top: 13px;
-    left: 77%;
-    z-index: 100;
-    max-width: 15%;
+
 }
 .selectionSynchBEBtns{
-	position: absolute;
-    top: 10px;
-    left: 62%;
-    z-index: 100;
-    max-width: 15%;
+
 }
 .selectionSubmitBEBtns{
-	position: absolute;
-    top: 11px;
-    left: 46%;
-    z-index: 100;
-    max-width: 14%;
+
 }
 .Cell
     {
@@ -601,55 +590,47 @@ transition:transform .3s ease-out;
     margin-left: 30%;
 	margin-right: 70px;
 }
-
 .emplAdvVoucherNo{
     width: 58.5%;   
 }
 .table1 {
     margin-bottom: 0px;
 }
-
 .topfixednavigate {
-    background-color: #100101;
-    border-bottom: 1px solid #999999;
-    color: #FFFFFF;
+    background-color: #fff;
+   /* border-bottom: 1px solid #999999;*/
+    color: #58a7c4;
     height: 40px;
     left: 0;
     margin: 0 auto;
-    padding: 38px 3px 6px;
+    padding: 0;
     position: fixed;
     right: 0;
     top: 0;
     width: 100%;
     z-index: 99;
+    box-shadow: 0px 0px 12px #555;
 }
-
-
 .main-wrapper {
-	background-image:url(../images/background-expense.jpg);
-	background-position: center;
-	background-repeat:no-repeat;
-	margin:5px auto;
-	height:227px;
-
+	margin:0 auto;
+	height:200px;
 }
-
 .startLoginPage {
-	font-size:20px;
+	font-size:18px;
 	color:#9BCC49;
 	text-align:center;
 	margin-top:0px;
 	font-weight:bold;
-	padding-bottom: 8px;
+	padding: 8px 0;
+	background-color: #000;
 }
-
 .softwarecontent {
-	font-size:21px;
-	color:#ffffff;
-	text-align:center;
-	margin-top:20px;
+    font-size: 22px;
+    color: #ffffff;
+    text-align: center;
+    margin-top: 10px;
+    line-height: normal;
 }
-
 .softwarecontent b, .softwarecontent strong {
 	font-weight:normal;
 	color:#4ebbd2;
@@ -658,7 +639,6 @@ transition:transform .3s ease-out;
 	font-weight:normal;
 	color:#9bcc53;
 }
-
 .companyLogo {
     background-image: url("../images/expenzing-logo.png");
 	background-repeat: no-repeat;
@@ -677,7 +657,7 @@ body {
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 11;
     top: 0;
     left: 0;
     background-color: #111;
@@ -747,7 +727,6 @@ div.image {
     margin-left: 26%;
 	margin-right: 25px;
 }
-
 .addInTamilflag {
 	background-image: url("../images/india(tamil).png");
     background-repeat: no-repeat;
@@ -758,29 +737,101 @@ div.image {
     margin-left: 26%;
 	margin-right: 30px;
 }
-
 .dropdown-content{
 	position: absolute;
     text-align: left;
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  /*  padding: 12px 16px;*/
+   /*padding: 12px 16px;*/
     z-index: 1;
     overflow-y: scroll;
     width: auto;
     height: 150px;
-
 }
-
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  border-style: ridge;
-  border-width: 1px;
+.dropdown-content a {color: black; padding: 12px 16px; text-decoration: none; display: block; border-style: ridge; border-width: 1px; } 
+.toprightmenu {font-size: 18px; cursor: pointer; position: absolute; left: auto; top: 10px; right: 10px; } 
+.backbtn {position: relative; top: 12px; left: 2px;}
+#horizontalTab {padding: 0 0 60px 0;}
+.modal-header {background-color: black; border: 0; height: 40px; }
+.btn-group-lg > .btn, .btn-lg {line-height: 1.42857143;}
+.modal-body #jssor_1 {top: 0 !important; height: 200px !important;}
+.ac-container h5 {color: #666; font-size: 13px;}
+.allcats {position: relative;}
+.claimicon {position: absolute; top: 24px; left: 10px;}
+.claimicongift {position: absolute; top: 15px; left: 10px;}
+.claimicon .fa-money {color: #1a72e8; font-size: 30px;}
+.claimicon .fa-plane {color: #598e3e; font-size: 30px;}
+.claimicongift .fa-briefcase {color: #db4437; font-size: 27px;}
+.claimicongift .fa-gift {color: #e88b00; font-size: 30px;}
+.topfixednavigate .fa-angle-left {color: #58a7c4; font-size: 30px; }
+.backbluebtn {width: 10px; height: 30px; display: inline-block; position: absolute; left: 3px; top: 4px; }
+.accordions {padding-bottom: 40px; background-color: #fff; padding-top: 20px;}
+.languagebar {padding-top: 80px; background-color: white; height: auto;}
+.loginpagescreen {padding: 0 15px 50px;}
+.loginpagescreen input {border-radius: 0;}
+.claimnum1 {position: absolute; top: 24px; right: 10px; background-color: #1a72e8; color: #fff; border-radius: 50px; font-size: 12px; padding: 4px; font-weight: normal !important; width: 35px; }
+.claimnum2 {position: absolute; top: 24px; right: 10px; background-color: #598e3e; color: #fff; border-radius: 50px; font-size: 12px; padding: 4px; font-weight: normal !important; width: 35px; }
+.claimnum3 {position: absolute; top: 24px; right: 10px; background-color: #db4437; color: #fff; border-radius: 50px; font-size: 12px; padding: 4px; font-weight: normal !important; width: 35px; }
+.claimnum4 {position: absolute; top: 24px; right: 10px; background-color: #e88b00; color: #fff; border-radius: 50px; font-size: 12px; padding: 4px; font-weight: normal !important; width: 35px; }
+.modal-content {position: relative; outline: 0; background: url(../images/background-expense.jpg); background-repeat: no-repeat; border: none; background-position: 0 -50px; -webkit-box-shadow:none; box-shadow:none;}
+.expbusinessbtn {width: 50%; font-size: 13px; background-color: #598e3e; border-radius: 0; float: left; padding: 10px 0; border:1px solid #ccc;}
+.expbusinessbtnsync {width: 50%; font-size: 13px; background-color: #1a72e8; border-radius: 0; padding: 10px 0; border:1px solid #ccc;}
+.expbusinessbtnsingle {width: 100%; font-size: 13px; background-color: #1a72e8; border-radius: 0; padding: 10px 0;}
+.approvedsign .fa-check-square-o {font-size: 22px;}
+.ac-container div:last-child label {border-bottom: 0;}
+.continuexp {color: #57a6c5; margin-bottom: 10px;}
+.savesyncwrapper {text-align: center; position: fixed; left: 0; right: 0; margin: 0 auto; padding: 0; bottom: 0px; z-index: 9; width: 100%; background-color: #fff;}
+#source th {font-size: 12px; padding: 4px; background-color: #888f96; color: #fff; border: 1px solid #b0b5b9; text-align: center; white-space: nowrap;}
+.selected td p {color: black !important; }
+.threebtn1 {
+	width: 33%;
+    font-size: 12px;
+    background-color: #1a72e8;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    float: left;
+    padding: 10px 5px;
+    background-color: #f4f4f4;
+    color: black;
+    /* font-size: 14px; */
 }
-
-.dropdown-content a:hover {background-color: #ddd;}
+.threebtn2 {
+    width: 34%;
+    font-size: 12px;
+    /* background-color: #598e3e; */
+    border-radius: 0;
+    border: 1px solid #ccc;
+    float: left;
+    padding: 10px 5px;
+    background-color: #f4f4f4;
+    color: black;
+}
+.threebtn3 {
+    width: 33%;
+    font-size: 12px;
+    /* background-color: #e88b00; */
+    /* border-radius: 0; */
+    /* border: 0; */
+    /* padding: 10px 0; */
+    border-radius: 0;
+    border: 1px solid #ccc;
+    float: left;
+    padding: 10px 5px;
+    background-color: #f4f4f4;
+    color: black;
+}
+.dropdown-menu {position: absolute; left: auto; top: 30px; right: 8px; }
+#myTabContent img {width: 80%;}
+.selectionSubmitTSBtns {
+	width: 50%;
+    font-size: 12px;
+    background-color: #1a72e8;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    float: left;
+    padding: 10px 5px;
+    background-color: #f4f4f4;
+    color: black;
+    /* font-size: 14px; */
+}
