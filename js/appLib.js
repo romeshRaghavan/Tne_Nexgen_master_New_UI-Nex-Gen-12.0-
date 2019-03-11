@@ -1180,7 +1180,6 @@ function setUserSessionDetails(val,userJSON){
 	 window.localStorage.setItem("GradeID",val.GradeID);
 	 window.localStorage.setItem("BudgetingStatus",val.BudgetingStatus);
 	 window.localStorage.setItem("UnitId",val.UnitId);
-	 alert("Map Provider : "+val.MapProvider);
 	 window.localStorage.setItem("MapProvider",val.MapProvider);
 	 //window.localStorage.setItem("mobileEC",val.mobileEC);
 	 //For Mobile Google Map Role Start
