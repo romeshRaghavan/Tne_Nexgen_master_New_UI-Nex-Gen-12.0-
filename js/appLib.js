@@ -1180,6 +1180,8 @@ function setUserSessionDetails(val,userJSON){
 	 window.localStorage.setItem("GradeID",val.GradeID);
 	 window.localStorage.setItem("BudgetingStatus",val.BudgetingStatus);
 	 window.localStorage.setItem("UnitId",val.UnitId);
+	 alert("Map Provider : "+val.MapProvider);
+	 window.localStorage.setItem("MapProvider",val.MapProvider);
 	 //window.localStorage.setItem("mobileEC",val.mobileEC);
 	 //For Mobile Google Map Role Start
 	 //End
@@ -1209,11 +1211,11 @@ function setUserSessionDetails(val,userJSON){
     }else{
      window.localStorage.setItem("mobileEC",val.mobileEC); 
     }
-    if(!val.hasOwnProperty('MapProvider')){
+    /*if(!val.hasOwnProperty('MapProvider')){
       window.localStorage.setItem("MapProvider","MAPMYINDIA");
     }else{
      window.localStorage.setItem("MapProvider",val.MapProvider); 
-    }  
+    } */ 
     //End
 	 window.localStorage.setItem("UserName",userJSON["user"]);
 	 window.localStorage.setItem("Password",userJSON["pass"]);
@@ -2638,8 +2640,7 @@ function validateExpenseAmtForVoucher(jsonToSaveEA){
 
 
 function validateMontlyAmtForVoucherForBEWithEA(jsonToSaveBE,busExpDetailsArr,empAdvArr,pageRefSuccess,pageRefFailure){
-	//alert("validateMontlyAmtForVoucher :");
-	//setTimeout(function(){
+	j('#loading_Cat').show();
 
 				j.ajax({
 				  url: window.localStorage.getItem("urlPath")+"ValidateBusExpPeriodictyWebService",
@@ -2759,6 +2760,7 @@ var headerBackBtn=defaultPagePath+'backbtnPage.html';
 
 function validateMontlyAmtForVoucherForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
 j('#loading_Cat').show();
+alert("1");
 
 				j.ajax({
 				  url: window.localStorage.getItem("urlPath")+"ValidateBusExpPeriodictyWebService",
@@ -2822,6 +2824,7 @@ j('#loading_Cat').show();
 
 function approvalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
 j('#loading_Cat').show();
+alert("2");
 
 var headerBackBtn=defaultPagePath+'backbtnPage.html';
 
@@ -2873,3 +2876,552 @@ j.ajax({
 }
 
 //********************  Methods For Entitlement Changes For Buss-Exp -- End ******************************//
+
+
+// *********************************  Upcoming Trips  -- Start *******************************************//
+
+
+
+function fetchDateForTrips(){
+var jsonForTrips = new Object();
+    jsonForTrips["EmployeeId"] = window.localStorage.getItem("EmployeeId");
+    ajaxCallForTripDates(jsonForTrips);
+}
+
+
+
+   function ajaxCallForTripDates(jsonForTrips){
+    urlPath=window.localStorage.getItem("urlPath");
+        j.ajax({
+                  url : urlPath +"FetchDateForTrips",
+                  type: 'POST',
+                  dataType: 'json',
+                  crossDomain: true,
+                  data: JSON.stringify(jsonForTrips),
+                  success: function(data) {
+                    if(data.Status=="Success"){
+                       var travelRequestDetails = data.TravelRequestDetails;
+                       setDynamicDate(travelRequestDetails);
+                   }
+                 },
+                  error:function(data) {
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+                 }
+           });
+}
+
+
+
+
+function setDynamicDate(travelRequestDetails){
+	if(travelRequestDetails != null && travelRequestDetails.length > 0){
+		  j('#dateClaimsbox').empty();
+
+                        for(var i=0; i<travelRequestDetails.length; i++ ){
+
+                                var stateArr = new Array();
+                                stateArr = travelRequestDetails[i];
+                                var tripDate = stateArr.travelDate;
+                                var from_loc = stateArr.from;
+                               	var to_loc = stateArr.to;
+                               	var tr_title_upcomingtrip= stateArr.tr_title;
+                               	var requestTripId= stateArr.travelRequestId;   
+
+
+                                  	                
+try{
+ var s = 
+ 	  "<li onclick ='fetchTripDetails("+ i +","+requestTripId+");'>"
+      +"<div class='trippreflist'>"
+      +"<span class='pull-left'>"
+      +"<input class='abc' id='tripDate_"+i +"' type=button value="+tripDate+" >"
+      +"</span>"
+	  +"<div class='pull-left'>"
+	  +"<table class='uptripstxttable'>"
+	  +"<tr><td colspan='4'><input class='sltpreftrip' id='tr_title_upcomingtrip_"+i+"' readonly='true' value=\""+tr_title_upcomingtrip+"\"></td></tr>"
+ 	  +"<tr><td>From: </td><td><input class='fligtprefdate' id='from_"+i+"' readonly='true' value="+from_loc+"></td><td>To: </td><td><input class='fligtprefdate' id='to_"+i+"' readonly='true' value="+to_loc+"></td></tr>"
+      +"</table>"     
+      +"</div>"
+      +"</div>"
+      +"</li>";
+      
+      
+}
+catch(e){
+    alert("exception in dynamic page : " +e);
+}
+
+     j('#dateClaimsbox').append(s);
+  }
+
+
+ }
+ else{
+
+	document.getElementById('tabNoUpcomingDate').style.display='';  
+ }
+
+}
+
+function formatDateNew(date1) {
+
+    var d = new Date(date1),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+
+}
+
+
+
+
+function fetchTripDetails(i,requestTripId){
+
+	document.getElementById('firstDiv').style.display='none';  
+	document.getElementById('tabTrip1').style.display='';  
+	document.getElementById('tripdet').style.display='';  
+
+	var jsonForTripDetails = new Object();
+	jsonForTripDetails["travelRequestId"] = requestTripId;
+	var dateFormat1 = document.getElementById("tripDate_"+ i ).value ;
+	dateNew = formatDateNew(dateFormat1);
+	jsonForTripDetails["expStartDate"] = dateNew;
+	ajaxCallForTripDetails(jsonForTripDetails);
+}
+
+
+
+   function ajaxCallForTripDetails(jsonForTripDetails){
+    urlPath=window.localStorage.getItem("urlPath");
+        j.ajax({
+                  url : urlPath +"FetchTripDetails",
+                  type: 'POST',
+                  dataType: 'json',
+                  crossDomain: true,
+                  data: JSON.stringify(jsonForTripDetails),
+                  success: function(data) {
+						
+						var TravelFlightDetails	=data.TravelFlightDetails;
+						
+						var TravelCabDetails = data.TravelCabDetails;
+					
+						var TravelAccDetails = data.TravelAccDetails;
+
+						setDynamicDetails(TravelFlightDetails,TravelCabDetails,TravelAccDetails);
+                     
+                      
+	                  
+                 },
+                  error:function(data) {
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+                 }
+           });
+	
+}
+
+
+function setDynamicDetails(TravelFlightDetails,TravelCabDetails,TravelAccDetails){
+
+if(TravelFlightDetails != null && TravelFlightDetails.length > 0){
+	j('#tripList').empty();
+	for(var i=0; i<TravelFlightDetails.length; i++){
+		      var stateArr1 = new Array();
+                 stateArr1 = TravelFlightDetails[i];
+    
+				 var to_Flight =stateArr1.to;
+                 var from_Flight = stateArr1.from;
+                 var from_date_Flight = stateArr1.from_date;
+                 var to_date_Flight = stateArr1.to_date;
+                 var carrier_name_Flight = stateArr1.carrier_name;
+                 var flight_no_Flight = stateArr1.flight_no;
+                 var pnr_id_Flight = stateArr1.pnr_id;
+ try{
+
+  var data1 ="<li class='airplan'>"
+		  +"<div class='trippreflist'>"
+		  +"<span class='pull-left tripreficon'><a href='#'><i class='fa fa-plane'></i></a></span>"
+		  +"<div class='pull-left triprefblock'>"
+		  +"<table class='uptripstxttable'>"	
+		  +"<tr><td>From: </td><td><input class='uptripstxtfld' id='from_Flight_"+i+"' readonly='true' value="+from_Flight+"></td><td>&nbsp;To: </td><td><input class='uptripstxtfld' id='to_Flight_"+i+"' readonly='true' value="+to_Flight+"></td></tr>"
+		  +"<tr><td>From: </td><td><input class='uptripstxtfld' id='from_date_Flight_"+i+"' readonly='true' value="+from_date_Flight+"></td><td>&nbsp;To: </td><td><input class='uptripstxtfld' id='to_date_Flight_"+i+"' readonly='true' value="+to_date_Flight+"></td></tr>"
+		  +"<tr><td class='carriarnametd'>Carrier Name: </td><td><input class='uptripstxtfld' id='carrier_name_Flight_"+i+"' readonly='true' value= \""+carrier_name_Flight+"\"></td><td class='carriarnametd'>&nbsp;Flight Number: </td><td><input class='uptripstxtfld' id='flight_no_Flight_"+i+"' readonly='true' value="+flight_no_Flight+"></td></tr>"
+		  +"<tr><td>PNR Id: </td><td><input class='uptripstxtfld' id='pnr_id_Flight_"+i+"' readonly='true' value="+pnr_id_Flight+"></td><td>&nbsp;</td><td>&nbsp;</td></tr>"
+		  +"</table>"
+          +"</div>"
+          +"</div>"
+          +"</li>";
+
+
+}catch(e){
+		    alert("exception in dynamic page : " +e);
+}
+  j('#tripList').append(data1);
+ }	
+
+}
+
+
+
+ if(TravelCabDetails != null && TravelCabDetails.length > 0){
+	for(var i=0; i <TravelCabDetails.length;i++){
+		 var stateArr = new Array();
+                 stateArr = TravelCabDetails[i];
+                 var fromCab = stateArr.from;
+                 var toCab =stateArr.to;
+                 var from_dateCab = stateArr.from_date;
+                 var to_dateCab = stateArr.to_date;
+                 var carrier_name = stateArr.carrier_name;
+
+try{
+var data2 ="<li class='carplan'>"
+		  +"<div class='trippreflist'>"
+		  +"<span class='pull-left tripreficon'><a href='#'><i class='fa fa-cab'></i></a></span>"
+		  +"<div class='pull-left triprefblock'>"
+		  +"<table class='uptripstxttable'>"	
+		  +"<tr><td>From: </td><td><input class='uptripstxtfld' id='fromCab_"+i+"' readonly='true' value="+fromCab+"></td><td>To: </td><td><input class='uptripstxtfld' id='todateCab_"+i+"'  readonly='true' value="+toCab+"></td></tr>"
+		  +"<tr><td>From: </td><td><input class='uptripstxtfld' id='from_dateCab_"+i+"' readonly='true' value="+from_dateCab+"></td><td>To: </td><td><input class='uptripstxtfld' id='to_dateCab_"+i+"' readonly='true' value="+to_dateCab+"></td></tr>"
+		  +"<tr><td class='carriarnametd'>Carrier Name: </td><td><input class='uptripstxtfld' id='carrier_nameCab_"+i+"' readonly='true' value="+carrier_name+"></td><td>&nbsp;</td><td>&nbsp;</td></tr>"
+		  +"</table>"
+          +"</div>"
+          +"</div>"
+          +"</li>";
+}catch(e){
+		    alert("exception in dynamic page : " +e);
+}
+	
+		j('#tripList').append(data2);
+	}
+}
+
+ if(TravelAccDetails != null && TravelAccDetails.length > 0){
+	for(var i=0; i <TravelAccDetails.length;i++){
+		 var stateArr = new Array();
+                 stateArr = TravelAccDetails[i];
+                 var hotel_name_acc = stateArr.hotel_name;
+                 var location_acc =stateArr.location_acc;
+                 var from_date_acc = stateArr.from_date;
+                 var to_date_acc = stateArr.to_date;
+
+try{
+var data3 ="<li class='accplan'>"
+		  +"<div class='trippreflist'>"
+		  +"<span class='pull-left tripreficon'><a href='#'><i class='fa fa-hospital-o'></i></a></span>"
+		  +"<div class='pull-left triprefblock'>"
+		  +"<table class='uptripstxttable'>"	
+		  +"<tr><td class='carriarnametd'>Hotel Name: </td><td><input class='uptripstxtfld' id='hotel_name_acc_"+i+"' readonly='true' value="+hotel_name_acc+"></td><td>Location: </td><td><input class='uptripstxtfld' id='location_acc_"+i+"' readonly='true' value="+location_acc+"></td></tr>"
+		  +"<tr><td>From: </td><td><input class='uptripstxtfld' id='from_date_acc_"+i+"' readonly='true' value="+from_date_acc+"></td><td>To: </td><td><input class='uptripstxtfld' id='to_date_acc_"+i+"' readonly='true' value="+to_date_acc+"></td></tr>"
+		  +"</table>"
+          +"</div>"
+          +"</div>"
+          +"</li>";
+}catch(e){
+		    alert("exception in dynamic page : " +e);
+}
+	
+		j('#tripList').append(data3);
+	}
+   }
+ }
+
+
+function fetchRequestNos(){
+var jsonForRequest = new Object();
+    jsonForRequest["EmployeeId"] = window.localStorage.getItem("EmployeeId");
+       ajaxCallForfetchingRequestNos(jsonForRequest);
+}
+
+
+   function ajaxCallForfetchingRequestNos(jsonForRequest){
+    urlPath=window.localStorage.getItem("urlPath");
+        j.ajax({
+                  url : urlPath +"FetchRequestNos",
+                  type: 'POST',
+                  dataType: 'json',
+                  crossDomain: true,
+                  data: JSON.stringify(jsonForRequest),
+                  success: function(data) {
+                    if(data.Status=="Success"){
+          				var TravelRequestNoArray = data.TravelRequestNoArray;
+  
+                            setDynamicRequestNo(TravelRequestNoArray);
+                   }
+                 },
+                  error:function(data) {
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+                 }
+           });
+}
+
+function setDynamicRequestNo(travelRequestNoArray){
+
+	if(travelRequestNoArray!=null && travelRequestNoArray.length>0){
+		j('#requestClaimsbox').empty();
+		for(var i=0;i<travelRequestNoArray.length;i++){
+
+			var stateArr = new Array();
+            stateArr = travelRequestNoArray[i];
+            var travel_no_tr = stateArr.tr_no;
+            var travel_title_tr = stateArr.tr_title;
+			var from_tr = stateArr.from; 
+            var to_tr = stateArr.to; 
+            var iternary_id_tr=stateArr.iternary;
+           
+ try{
+
+var request = "<li id = 'tripTravelId_"+i+"' onclick ='fetchTicketPreferences("+ i +","+iternary_id_tr+")'>"
+      +"<div class='trippreflist'>"
+      +"<span class='pull-left'>"
+      +"<input class='abc' id='travel_no_tr_"+i +"' type=button value="+travel_no_tr+" >"
+      +"</span>"
+	  +"<div class='pull-left'>"
+	  +"<table class='uptripstxttable'>"
+	  +"<tr><td colspan='4'><input class='sltpreftrip' id='travel_title_tr_"+i+"' readonly='true' value= \""+travel_title_tr+"\"></td></tr>"
+ 	  +"<tr><td>From: </td><td><input class='fligtprefdate' id='from_tr_"+i+"' readonly='true' value="+from_tr+"></td><td>To: </td><td><input class='fligtprefdate' id='to_tr_"+i+"' readonly='true' value="+to_tr+"></td></tr>"
+      +"</div>"
+      +"</div>"
+      +"</li>";
+
+        }catch(e){
+        	    alert("exception in dynamic page : " +e);
+ 				}
+
+		j('#requestClaimsbox').append(request);
+		}
+	}
+	else{
+		document.getElementById('tabNoPreferences').style.display=''; 
+	}
+}
+
+var divIdForRequestNos;
+var jsonForTicketOptions = new Object();
+function fetchTicketPreferences(i,iternary_id){
+
+    document.getElementById('firstDiv').style.display='none';  
+	document.getElementById('flightdet').style.display='';  
+	document.getElementById('tabFlight1').style.display='';  
+    divIdForRequestNos = document.getElementById('tripTravelId_'+i);
+
+	
+	jsonForTicketOptions["iternary_id"] = iternary_id;
+	ajaxCallForTicketOptions(jsonForTicketOptions);
+
+}
+
+
+   function ajaxCallForTicketOptions(jsonForTicketOptions){
+    urlPath=window.localStorage.getItem("urlPath");
+        j.ajax({
+                  url : urlPath +"FetchTicketOptions",
+                  type: 'POST',
+                  dataType: 'json',
+                  crossDomain: true,
+                  data: JSON.stringify(jsonForTicketOptions),
+                  success: function(data) {
+                     
+                     if(data.Status=="Success"){
+          				var TravelFlightOptions = data.TravelFlightOptions;
+                            showFlightOptions(TravelFlightOptions);
+                   }
+                      
+	               },
+                  error:function(data) {
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+                 }
+           });
+	
+}
+
+
+var flightpreferencesArrayNew=new Array();
+
+function showFlightOptions(TravelFlightOptions){
+
+flightpreferencesArrayNew = TravelFlightOptions;
+if(TravelFlightOptions != null && TravelFlightOptions.length > 0){
+	j('#flightpreferences').empty();
+	for(var i=0; i<TravelFlightOptions.length; i++){
+		      var stateArr = new Array();
+                 stateArr = TravelFlightOptions[i];
+    
+    			var optionId = stateArr.ticketOptionsId;
+				 var from_pre =stateArr.from;
+                 var to_pre = stateArr.to;
+                 var from_date_pre = stateArr.from_date;
+                 var to_date_pre = stateArr.to_date;
+                 var carrier_name_pre = stateArr.carrier_name;
+                 var amount_pre = stateArr.amount;
+                 var category_pre = stateArr.category;
+try{
+var options = "<li class='airplan'>"
+			+"<div class='trippreflist'>"
+			+"<input  id='optionId_"+i+"' value="+optionId+"  style='display:none;'>"
+			+"<span class='pull-left tripreficon'><input id ='bookingPriority_"+i+"' type='text' value='0' class='selectpreftxt' onkeyUp='validateBookingPriority("+i+");' onclick='changeValue("+i+");' ></span>"
+			+"<div class='pull-left triprefblock'>"
+			+"<table class='uptripstxttable'>"
+			+"<tr><td>From: </td><td><input class='uptripstxtfld' id='from_pre_"+i+"' readonly='true' value="+from_pre+"></td><td>To: </td><td><input class='uptripstxtfld' id='to_pre_"+i+"'  readonly='true' value="+to_pre+"></td></tr>"
+			+"<tr><td>From: </td><td><input class='uptripstxtfld' id='from_date_pre_"+i+"' readonly='true' value="+from_date_pre+"></td><td>To: </td><td><input class='uptripstxtfld' id='to_date_"+i+"'  readonly='true' value="+to_date_pre+"></td></tr>"
+			+"<tr><td class='carriarnametd'>Carrier Name: </td><td><input class='uptripstxtfld' id='carrier_name_pre_"+i+"' readonly='true' value=\""+carrier_name_pre+"\"></td><td class='carriarnametd'>Amount: </td><td><input class='uptripstxtfld' id='amount_pre_"+i+"' readonly='true' value="+amount_pre+"></td></tr>"
+			+"<tr><td>Category: </td><td><input class='uptripstxtfld' id='category_pre_"+i+"' readonly='true' value="+category_pre+"></td><td>&nbsp;</td><td>&nbsp;</td></tr>"
+			+"</table>"
+            +"</div>"
+            +"</div>"
+            +"</li>";        
+                              
+
+}catch(e){
+		    alert("exception in dynamic page : " +e);
+}
+  j('#flightpreferences').append(options);
+ }	
+
+}
+}
+
+
+function changeValue(i){
+   var valueCheck = document.getElementById("bookingPriority_"+i).value
+   if(valueCheck==0){
+	document.getElementById("bookingPriority_"+i).value ='';
+}
+
+}
+
+function populatePriority(){
+	var preferencesJSONNew = [];
+	var preferencesJSON = new Object();
+	var jsonForPreferences = new Object();
+    var len =flightpreferencesArrayNew.length;
+     var bookingString = '';
+
+	for(var i=0; i<len; i++){
+	var bookingNo = document.getElementById("bookingPriority_"+i).value;
+	var optionId = document.getElementById("optionId_"+i).value;
+
+    if(validatePriority(bookingNo,len,i)){
+      bookingString = bookingString+optionId+"-"+bookingNo;
+
+	  if(i == flightpreferencesArrayNew.length-1){
+	    bookingString = bookingString;
+       }
+       else{
+	  bookingString = bookingString+"," ;
+       } 
+     } else {
+ 	return false;
+   }
+
+}
+     preferencesJSON["details"] = bookingString; 
+
+preferencesJSON["iternary_id_update"] = jsonForTicketOptions["iternary_id"];
+    ajaxForSettingPriority(preferencesJSON);
+
+   }
+
+var priorityCount = 0;
+var checkNewArray = new Array();
+  function validatePriority(bookingNo,len,n){
+  
+
+   		if( bookingNo == '' || bookingNo == 0 ){
+					alert("Please fill the Booking Priority.");
+					  checkNewArray.length = 0;
+					return false;
+
+				}
+
+      else if(bookingNo < 0 || bookingNo > len ){
+					alert("The Booking Priority must be between 1 and total number of options.");
+					  checkNewArray.length = 0;
+					return false;
+
+				}
+                    
+            if(checkNewArray.includes(bookingNo)){
+              alert('Priority should be unique.');
+              checkNewArray.length = 0;
+
+              	return false;	
+              }
+
+              checkNewArray[n] = bookingNo;
+               
+			return true;
+   }
+
+
+   function ajaxForSettingPriority(jsonForPreferences){
+    urlPath=window.localStorage.getItem("urlPath");
+        j.ajax({
+                  url : urlPath +"SetBookingPriority",
+                  type: 'POST',
+                  dataType: 'json',
+                  crossDomain: true,
+                  data: JSON.stringify(jsonForPreferences),
+                  success: function(data) {
+                     
+                     if(data.Status=="Success"){
+
+               
+                   divIdForRequestNos.remove();
+          		   document.getElementById('flightdet').style.display='none';  
+	               document.getElementById('tabSuccess').style.display='';
+	               checkNewArray.length = 0;
+	               
+
+                   }
+                 },
+
+                  error:function(data) {
+                    alert(window.lang.translate('Error: Oops something is wrong, Please Contact System Administer'));
+                 }
+           });
+	
+}
+
+
+	function validateBookingPriority(i){
+
+	 var bookingPriorityValue=document.getElementById("bookingPriority_"+i).value;
+     if(isNumericForDetailQty(bookingPriorityValue,"Booking Priority")==false)
+				{
+					document.getElementById("bookingPriority_"+i).value="";
+					return false;
+				}
+
+
+}
+	function isNumericForDetailQty(objectValue,messageContent) {
+
+		if(isNaN(objectValue)) {
+            alert(messageContent+" should be numeric.");
+            objectValue.value="";
+            return false;
+    	} 
+		else if((objectValue).indexOf('-') != -1){
+			alert(messageContent + "should not be negative.");
+			objectValue.value="";
+			return false;
+		}else if((objectValue).indexOf(' ') != -1){
+			alert(messageContent + "should not contain space.");
+			objectValue.value="";
+			return false;
+		}
+		else if((objectValue).indexOf('.') != -1){
+			alert(messageContent + "should not be fractional.");
+			objectValue.value="";
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+
+// *********************************  Upcoming Trips  -- End *******************************************//

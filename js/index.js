@@ -3,9 +3,9 @@ var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
 //var WebServicePath ='http://1.255.255.184:8085/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
+//var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
 //var WebServicePath ='http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath ='http://1.255.255.98:8082/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath ='http://1.255.255.98:8082/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -135,8 +135,8 @@ function commanLogin(){
  	var domainName = userNameValue.split('@')[1];
 	 var jsonToDomainNameSend = new Object();
 	jsonToDomainNameSend["userName"] = domainName;
-	jsonToDomainNameSend["mobilePlatform"] = device.platform;
-	//jsonToDomainNameSend["mobilePlatform"] = "Android";
+	//jsonToDomainNameSend["mobilePlatform"] = device.platform;
+	jsonToDomainNameSend["mobilePlatform"] = "Android";
 	jsonToDomainNameSend["appType"] = "NEXGEN_EXPENZING_TNE_APP";
   	//var res=JSON.stringify(jsonToDomainNameSend);
 	var requestPath = WebServicePath;
@@ -985,14 +985,13 @@ function saveTravelRequestAjax(jsonToSaveTR){
 			  data: JSON.stringify(jsonToSaveTR),
 			  success: function(data) {
 				  if(data.Status=="Failure"){
-					  if(data.hasOwnProperty('IsEntitlementExceed')){
-							setTREntitlementExceedMessage(data,jsonToSaveTR);
-							 
+				  		j('#loading_Cat').hide();
+					  if(data.hasOwnProperty('IsEntitlementExceed')){				  		
+							setTREntitlementExceedMessage(data,jsonToSaveTR);		 
+						}else{
+							alert(data.Message);
 						}
-					  successMessage = data.Message;
-                      //alert(window.lang.translate(successMessage));
-
-					  
+	  
 				  }else if(data.Status=="Success"){
 					  successMessage = data.Message;
 						j('#loading_Cat').hide();
@@ -1340,7 +1339,6 @@ function setPerUnitDetails(transaction, results){
 				$(".dropdown-content").hide(); 
 				fromLocationWayPoint = "";
 				toLocationWayPoint = ""; 
-				//alert(window.localStorage.getItem("MobileMapRole"))
 				if(window.localStorage.getItem("MobileMapRole") == 'true') 
 				{
 					if(window.localStorage.getItem("MapProvider") == "GOOGLEMAP"){
@@ -1554,17 +1552,16 @@ function setDelayMessage(returnJsonData,jsonToBeSend,busExpDetailsArr){
 
 function setTREntitlementExceedMessage(returnJsonData,jsonToBeSend){
 		var msg=returnJsonData.Message+".\nThis voucher has exceeded Entitlements. Do you want to proceed?";
-	navigator.notification.confirm(msg,
-		function(buttonIndex){
-            onConfirm(buttonIndex, msg,jsonToBeSend);
-        }, 
-		'confirm', 'Yes, No');
-
-	
+			var IsEntitlementExceed = confirm(msg);
+ 			if (IsEntitlementExceed == true) {
+  				  onConfirm(IsEntitlementExceed,msg,jsonToBeSend);
+  			} else {
+   		 		return false;
+  					}
 	}
 
-function onConfirm(buttonIndex,errormsg,jsonToBeSend){
-    if (buttonIndex === 1){
+function onConfirm(IsEntitlementExceed,errormsg,jsonToBeSend){
+    if (IsEntitlementExceed == true){
     	jsonToBeSend["EntitlementAllowCheck"]=true;
          j('#loading_Cat').show();
 		saveTravelRequestAjax(jsonToBeSend);
@@ -2322,7 +2319,7 @@ console.log("url :  "+tempurl);
 var settings = {
   "async": true,
   "crossDomain": true,
-  "url": "https://atlas.mapmyindia.com/api/places/search/json?query="+queryValue+"&location=28.6321438802915%2C77.2173553802915",
+  "url": "https://cors-anywhere.herokuapp.com/https://atlas.mapmyindia.com/api/places/search/json?query="+queryValue+"&location=28.6321438802915%2C77.2173553802915",
   "method": "GET",
   "headers": {
   "authorization": authorization,
@@ -2436,7 +2433,6 @@ $.ajax(settings).done(function (response) {
 
   		setUnitBasedOnResponse(response)
 });
-
 
 }else{
 	unitValue = document.getElementById("expUnit");
@@ -3420,3 +3416,48 @@ function populateMainPage(){
      }
 
 
+//  *****************************************  Upcoming Trips -- Start  **************************************//
+
+function addTrip(){ 
+	window.location.href = 'app/pages/trips-info.html';
+}
+
+function clearDiv(){
+	
+	document.getElementById('firstDiv').style.display='';  
+	document.getElementById('tabTrip1').style.display='none';  
+	document.getElementById('tripdet').style.display='none'; 
+	document.getElementById('tabFlight1').style.display='none'; 
+	document.getElementById('flightdet').style.display='none'; 
+	document.getElementById('tabSuccess').style.display='none'; 
+}
+
+
+function clearDivSync(){
+	document.getElementById('tabTrip1').style.display='none';  
+	document.getElementById('tripdet').style.display='none'; 
+	document.getElementById('tabFlight1').style.display='none'; 
+	document.getElementById('flightdet').style.display='none'; 
+	document.getElementById('tabSuccess').style.display='none'; 
+}
+
+
+
+function clearDivExpense(){
+	document.getElementById('tabTrip1').style.display='none';  
+	document.getElementById('tripdet').style.display='none'; 
+	document.getElementById('tabFlight1').style.display='none'; 
+	document.getElementById('flightdet').style.display='none'; 
+	document.getElementById('tabSuccess').style.display='none'; 
+}
+
+
+function clearDivRequest(){
+	document.getElementById('tabTrip1').style.display='none';  
+	document.getElementById('tripdet').style.display='none'; 
+	document.getElementById('tabFlight1').style.display='none'; 
+	document.getElementById('flightdet').style.display='none'; 
+	document.getElementById('tabSuccess').style.display='none'; 
+}
+
+//  *****************************************  Upcoming Trips -- End  **************************************//
