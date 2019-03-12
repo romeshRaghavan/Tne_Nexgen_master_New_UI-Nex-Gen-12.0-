@@ -3045,8 +3045,8 @@ function submitBEWithEA(){
 						    });
                                
 				   }      
-				   alert("accountHeadIdToBeSent " +accountHeadIdToBeSent);
-				   alert("busExpDetailsArr.length " +busExpDetailsArr.length);			 
+				  // alert("accountHeadIdToBeSent " +accountHeadIdToBeSent);
+				  // alert("busExpDetailsArr.length " +busExpDetailsArr.length);			 
 						if(accountHeadIdToBeSent!="" && busExpDetailsArr.length>0){
 						  	 sendForApprovalBusinessDetailsWithEa(jsonExpenseDetailsArr,jsonEmplAdvanceArr,busExpDetailsArr,emplAdvanceDetailsArr,accountHeadIdToBeSent);
 						  }
