@@ -1692,6 +1692,7 @@ function createTravelRequestNoDropDown(jsonTravelRequestNoArr){
 	});
 }
 function oprationOnExpenseClaim(){
+	alert("in OperationOnExpense");
 	j(document).ready(function(){
         if(window.localStorage.getItem("EaInMobile") == "true"){
             	j('#send').on('click', function(e){ 
@@ -2933,6 +2934,7 @@ function calculateAmount(){
     }
 
 function submitBEWithEA(){
+	alert("submitBEWithEA");
     var jsonExpenseDetailsArr = [];
     var busExpDetailsArr = [];
     var jsonEmplAdvanceArr = [];
@@ -3042,7 +3044,9 @@ function submitBEWithEA(){
                             jsonEmplAdvanceArr.push(jsonFindEA);
 						    });
                                
-				   }      			 
+				   }      
+				   alert("accountHeadIdToBeSent " +accountHeadIdToBeSent);
+				   alert("busExpDetailsArr.length " +busExpDetailsArr.length);			 
 						if(accountHeadIdToBeSent!="" && busExpDetailsArr.length>0){
 						  	 sendForApprovalBusinessDetailsWithEa(jsonExpenseDetailsArr,jsonEmplAdvanceArr,busExpDetailsArr,emplAdvanceDetailsArr,accountHeadIdToBeSent);
 						  }
