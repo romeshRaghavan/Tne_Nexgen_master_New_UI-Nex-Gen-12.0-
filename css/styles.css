@@ -835,3 +835,15 @@ div.image {
     color: black;
     /* font-size: 14px; */
 }
+.walletbtn1 {
+	width: 100%;
+    font-size: 12px;
+    background-color: #1a72e8;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    float: left;
+    padding: 10px 5px;
+    background-color: #f4f4f4;
+    color: black;
+    /* font-size: 14px; */
+}
