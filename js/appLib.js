@@ -48,7 +48,6 @@ var app = {
 
 function goBack() {
 	var currentUser=getUserID();
-	
 	var loginPath=defaultPagePath+'loginPage.html';
 	var headerBackBtn=defaultPagePath+'backbtnPage.html';
 	var headerCatMsg=defaultPagePath+'categoryMsgPage.html';

@@ -128,7 +128,8 @@
         "Submit Expense":"Skicka utgifter",
         "Request Advance":"Förfrågan Förskott",
         "Justification":"Berättigande",
-        "Advance Type":"förskott typ"
+        "Advance Type":"förskott typ",
+        "Claim Expense":"fordran bekostnad"
 	},
 	"regex": [
 		["Enter your user name","Skriv in ditt användarnamn"],
