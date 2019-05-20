@@ -2100,11 +2100,10 @@ a.hvr-hollow:hover,a.hvr-hollow:focus,a.hvr-hollow:active {
 		padding: 0em 0em;
 	}
 	.resp-tab-item {
-		color: #193042;
-		font-size: 11px;
-		width: 33.329%;
-		padding: 17px 0px;
-	}
+    font-size: 13px;
+    width: 25%;
+    padding: 17px 0px;
+  }
 	.skill-inner {
 		padding: 1em;
 	}
@@ -2981,10 +2980,10 @@ a.hvr-hollow:hover,a.hvr-hollow:focus,a.hvr-hollow:active {
 		background: url("../images/tw.png") no-repeat 36px 8px #2daae4;
 	}
 	.resp-tab-item {
-		font-size: 13px;
-		width: 33.329%;
-		padding: 17px 0px;
-	}
+    font-size: 13px;
+    width: 25%;
+    padding: 17px 0px;
+  }
 	a.hvr-bounce-to-bottom2 {
 		padding: 1em 1em;
 		font-size: 1em;
