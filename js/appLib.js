@@ -2758,6 +2758,7 @@ var headerBackBtn=defaultPagePath+'backbtnPage.html';
 
 function validateMontlyAmtForVoucherForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
 j('#loading_Cat').show();
+alert("1");
 
 				j.ajax({
 				  url: window.localStorage.getItem("urlPath")+"ValidateBusExpPeriodictyWebService",
@@ -2821,6 +2822,7 @@ j('#loading_Cat').show();
 
 function approvalServiceForBE(jsonToSaveBE,busExpDetailsArr,pageRefSuccess,pageRefFailure){
 j('#loading_Cat').show();
+alert("2");
 
 var headerBackBtn=defaultPagePath+'backbtnPage.html';
 
