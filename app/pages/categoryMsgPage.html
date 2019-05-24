@@ -64,20 +64,29 @@ hideMultilanguage();
         <center><H4 id="headerId" class="headerposition"></H4></center>
 
   <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <a href="#" onclick="showProfile()" lang="en"><i class="fa fa-user-circle-o" style="margin-right: 10px;font-size: large;"></i><span>Profile</span>
 
+      <a href="#" lang="en" style="border-bottom: 1px solid lightgrey;margin-top: -30px;"">
+        <span id="empName" style="font-size:20px;"></span>
+        <i class="fa fa-times" href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="font-size:x-large;float: right;margin-top: -25px;"></i>
+      </a>
+      <a href="#" style="margin-top:15px;" onclick="showProfile()" lang="en"><i class="fa fa-user-circle-o" style="margin-right: 10px;font-size: large;"></i>
+        <span>Profile</span>
+      </a>
       <a lang="en" href="#" onclick="showSyncMaster()">
-        <i class="fa fa-skyatlas" style="margin-right: 10px;font-size: large;"></i><span>Sync Masters</span>
+        <i class="fa fa-skyatlas" style="margin-right: 10px;font-size: large;"></i>
+        <span>Sync Masters</span>
       </a>
       <a href="#" id='multiLang' onclick="showMultiLanguag()" lang="en">
-        <i class="fa fa-cogs" style="margin-right: 10px;font-size: large;"></i><span>Settings</span>
+        <i class="fa fa-cogs" style="margin-right: 10px;font-size: large;"></i>
+        <span>Languages</span>
       </a>
       <a href="#" onclick="showAboutPage()" lang="en">
-        <i class="fa fa-info-circle" style="margin-right: 10px;font-size: large;"></i><span>About</span>
+        <i class="fa fa-info-circle" style="margin-right: 10px;font-size: large;"></i>
+        <span>About</span>
       </a>
       <a href="#" onclick="logOut()" lang="en">
-        <i class="fa fa-sign-out" style="margin-right: 10px;font-size: large;"></i><span>Log Out</span>
+        <i class="fa fa-sign-out" style="margin-right: 10px;font-size: large;"></i>
+        <span>Log Out</span>
       </a> 
     </div>
 
@@ -102,4 +111,7 @@ function openNav() {
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
 }
+
+document.getElementById("empName").innerHTML = window.localStorage.getItem("FirstName")+" "
+                                                +window.localStorage.getItem("LastName")
 </script>
