@@ -3421,3 +3421,80 @@ var checkNewArray = new Array();
 
 
 // *********************************  Upcoming Trips  -- End *******************************************//
+
+// *********************************   LogOut -- Start ************************************************//
+
+function logOut(){
+	var headerBackBtn=defaultPagePath+'backbtnPage.html';
+     var pageRef=defaultPagePath+'logOutPage.html';
+			j(document).ready(function() {
+				j('#mainHeader').load(headerBackBtn);
+				j('#mainContainer').load(pageRef);
+			});
+   appPageHistory.push(pageRef);
+}
+
+function deleteLocalDatabase(){
+try{
+	localStorage.clear();
+
+	if(mydb){
+			mydb.transaction(function (t) {
+			t.executeSql("delete from currencyMst");
+			t.executeSql("delete from accountHeadMst");
+			t.executeSql("delete from expNameMst");
+			t.executeSql("delete from businessExpDetails");
+			t.executeSql("delete from walletMst");
+			t.executeSql("delete from travelModeMst");
+			t.executeSql("delete from travelCategoryMst");
+			t.executeSql("delete from cityTownMst");
+			t.executeSql("delete from travelTypeMst");
+			t.executeSql("delete from travelAccountHeadMst");
+			t.executeSql("delete from travelExpenseNameMst");
+			t.executeSql("delete from travelSettleExpDetails");
+			t.executeSql("delete from travelRequestDetails");
+			t.executeSql("delete from accountHeadEAMst");
+			t.executeSql("delete from advanceType");
+			t.executeSql("delete from employeeAdvanceDetails");
+			t.executeSql("delete from currencyConversionMst");
+			t.executeSql("delete from smsMaster");
+			t.executeSql("delete from smsScrutinizerMst");	
+				});
+			}
+		init();
+	}catch(e){
+		alert(e);
+	}
+}
+
+function defaultPage(){
+	       init();
+	}
+// *********************************   LogOut -- End ************************************************//
+
+// *********************************   Profile Page -- Start ************************************************//
+
+	function showProfile(){
+		var headerBackBtn=defaultPagePath+'backbtnPage.html';
+		     var pageRef=defaultPagePath+'profilePage.html';
+					j(document).ready(function() {
+						j('#mainHeader').load(headerBackBtn);
+						j('#mainContainer').load(pageRef);
+					});
+		   appPageHistory.push(pageRef);
+	}
+// *********************************   Profile Page -- Start ************************************************//
+
+
+// *********************************   About Page -- Start ************************************************//
+
+	function showAboutPage(){
+		var headerBackBtn=defaultPagePath+'backbtnPage.html';
+		     var pageRef=defaultPagePath+'aboutPage.html';
+					j(document).ready(function() {
+						j('#mainHeader').load(headerBackBtn);
+						j('#mainContainer').load(pageRef);
+					});
+		   appPageHistory.push(pageRef);
+	}
+// *********************************   About Page -- Start ************************************************//
