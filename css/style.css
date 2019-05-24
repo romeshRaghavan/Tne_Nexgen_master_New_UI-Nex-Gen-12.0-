@@ -3176,6 +3176,20 @@ body h1 {
 	.main-content {
 		padding-top:0.9em;
 	}
+
+.fa1 {
+    font-size: 80px;
+    margin-left: 150px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: lightgray;
 }
-#mySidenav a:last-child{display:none;}
+
+label {
+    font-weight: 600;
+}
+
+
+
+}
 
