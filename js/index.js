@@ -3385,7 +3385,6 @@ function hideMultilanguage(){
 
 
 function populateMainPage(){
-	 window.location.reload(true);
     	j('#loading').show();
     	var headerBackBtn=defaultPagePath+'categoryMsgPage.html';
 	    var pageRef=defaultPagePath+'category.html';
@@ -3406,7 +3405,7 @@ function populateMainPage(){
 				synchronizeTRForTS();  
 			  }
                 synchronizeBEMasterData();
-                
+              
                 
             if(window.localStorage.getItem("smartClaimsViaSMSOnMobile") != null && 
                  window.localStorage.getItem("smartClaimsViaSMSOnMobile")){
@@ -3461,5 +3460,6 @@ function clearDivRequest(){
 	document.getElementById('flightdet').style.display='none'; 
 	document.getElementById('tabSuccess').style.display='none'; 
 }
+ 
 
 //  *****************************************  Upcoming Trips -- End  **************************************//

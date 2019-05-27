@@ -3461,14 +3461,23 @@ try{
 			t.executeSql("delete from smsScrutinizerMst");	
 				});
 			}
-		init();
+			
+		location.reload(true);
+		 
+			setTimeout(function () {
+			init();
+			 }, 200);
+
 	}catch(e){
 		alert(e);
 	}
 }
 
 function defaultPage(){
-	       init();
+	location.reload(true);
+	       setTimeout(function () {
+			init();
+			 }, 200);
 	}
 // *********************************   LogOut -- End ************************************************//
 
