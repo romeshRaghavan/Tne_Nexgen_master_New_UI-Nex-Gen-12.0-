@@ -3425,13 +3425,23 @@ var checkNewArray = new Array();
 // *********************************   LogOut -- Start ************************************************//
 
 function logOut(){
-	var headerBackBtn=defaultPagePath+'backbtnPage.html';
+/*	var headerBackBtn=defaultPagePath+'backbtnPage.html';
      var pageRef=defaultPagePath+'logOutPage.html';
 			j(document).ready(function() {
 				j('#mainHeader').load(headerBackBtn);
 				j('#mainContainer').load(pageRef);
 			});
-   appPageHistory.push(pageRef);
+   appPageHistory.push(pageRef);*/
+
+var msg = "Please sync your pending expenses before you exit or they will be lost";
+
+var entitlementMsg = confirm(msg);
+
+if(entitlementMsg){
+deleteLocalDatabase();
+}else{
+defaultPage();
+}
 }
 
 function deleteLocalDatabase(){
