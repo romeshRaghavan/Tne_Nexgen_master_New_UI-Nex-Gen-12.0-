@@ -52,6 +52,7 @@
 <script>
     
     function setLang(lang){
+        window.location.reload(true);
         window.lang.change(lang);
         window.localStorage.setItem("localLanguage",lang);
         populateMainPage();
