@@ -3385,6 +3385,7 @@ function hideMultilanguage(){
 
 
 function populateMainPage(){
+	 window.location.reload(true);
     	j('#loading').show();
     	var headerBackBtn=defaultPagePath+'categoryMsgPage.html';
 	    var pageRef=defaultPagePath+'category.html';
