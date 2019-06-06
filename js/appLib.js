@@ -28,6 +28,7 @@ var app = {
 	onDeviceReady: function() {
        		  if (navigator.notification) { // Override default HTML alert with native dialog
 			  window.alert = function (message) {
+		
 				  navigator.notification.alert(
 					  message,   	 // message
 					  null,       	// callback
@@ -492,19 +493,7 @@ function fetchExpenseClaim() {
 					j(this).addClass('selected');
 				}					
 				}								
-			});
-			  
-			  j(function(){
-  	alert("swipe start");
-  	  // Bind the swipeleftHandler callback function to the swipe event on div.box
-  j( "#source" ).on( "swipeleft", swipeleftHandler );
- 
-  // Callback function references the event target and adds the 'swipeleft' class to it
-  function swipeleftHandler( event ){
-   alert("swiped");
-  }
-});
-			  
+			});  
 			}
 		 });
 	 });	 
